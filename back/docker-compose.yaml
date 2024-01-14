@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  app: 
+    container_name: tournament
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "8080:80"
+    depends_on:
+      - mysql
+    volumes:
+      - ./symfony:/var/www/html
+      - ./apache/default.conf:/etc/apache2/sites-available/000-default.conf
+      - /var/www/html/vendor
+      - .env.dev:/var/www/html/.env.dev
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: tournament
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - '3307:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+  phpma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_USER: symfony
+      PMA_PASSWORD: symfony
+    ports:
+      - 8899:80
+volumes:
+  mysql_data:
+    
