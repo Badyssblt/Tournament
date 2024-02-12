@@ -8,16 +8,26 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AcceptToJoinTeamController;
+use App\Controller\AddRequestJoinTeamController;
+use App\Controller\GetRequestUserController;
 use App\Repository\TeamJoinRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TeamJoinRequestRepository::class)]
 #[ApiResource()]
-#[Post()]
+#[Post(
+    controller: AddRequestJoinTeamController::class,
+    read: false
+)]
 #[Get()]
 #[Patch(
     controller: AcceptToJoinTeamController::class,
     read: false
+)]
+#[GetCollection(
+    controller: GetRequestUserController::class,
+    read: false,
+    uriTemplate: "/teamJoinRequests/get"
 )]
 #[GetCollection()]
 class TeamJoinRequest

@@ -22,29 +22,27 @@ class AcceptToJoinTeamController extends AbstractController
         if (!$user) {
             return $this->json(null, Response::HTTP_UNAUTHORIZED);
         }
+
         $requestData = $serializer->deserialize($content, TeamJoinRequest::class, 'json');
         $requestData->setId($id);
         $existingRequest = $repository->find($id);
-        if ($existingRequest !== null && $existingRequest->getRequestingUser() === $requestData->getRequestingUser() && $existingRequest->getTargetTeam() === $requestData->getTargetTeam()) {
+        if ($existingRequest !== null && $existingRequest->getRequestingUser() === $user && $existingRequest->getTargetTeam() === $requestData->getTargetTeam()) {
             $team = $existingRequest->getTargetTeam();
-            if ($team->getCreator() === $user) {
-                if ($requestData->getStatus() === "accept") {
-                    $team->addUser($requestData->getRequestingUser());
-                    $manager->persist($team);
-                    $manager->flush();
-                    $existingRequest->setStatus("accept");
-                    $manager->remove($existingRequest);
-                    $manager->flush();
-                    return $team;
-                } else if ($requestData->getStatus() === "denied") {
-                    $manager->remove($existingRequest);
-                    $manager->flush();
-                    return $this->json(null, Response::HTTP_NO_CONTENT);
-                }
+            if ($requestData->getStatus() === "accept") {
+                $team->addUser($user);
+                $manager->persist($team);
+                $manager->flush();
+                $existingRequest->setStatus("accept");
+                $manager->remove($existingRequest);
+                $manager->flush();
+                return $team;
+            } else if ($requestData->getStatus() === "denied") {
+                $manager->remove($existingRequest);
+                $manager->flush();
+                return $this->json(null, Response::HTTP_NO_CONTENT);
             }
-
         } else {
-
+            return $this->json(null, Response::HTTP_NO_CONTENT);
         }
     }
 }

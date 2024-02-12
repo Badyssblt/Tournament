@@ -24,13 +24,15 @@ class CreateTeamController extends AbstractController
         $content = $request->getContent();
         $team = $serializer->deserialize($content, Team::class, "json");
         $existingTeam = $teamRepository->findOneBy(['name' => $team->getName()]);
+
         if ($existingTeam) {
-            return $existingTeam;
+            return $this->json(['message' => 'Le nom de cette équipe existe déjà.'], Response::HTTP_CONFLICT);
         }
         $team->setCreator($user);
         $manager->persist($team);
         $manager->flush();
-        return $team;
+
+        return $this->json($team);
 
     }
 }

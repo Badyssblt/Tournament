@@ -19,19 +19,20 @@ class AddUserToTeamController extends AbstractController
         $user = $manager->find(User::class, $userId);
         if ($user) {
             $team = $manager->find(Team::class, $id);
-            if ($team) {
-                $users = $team->getUser();
-                $users->initialize();
-                if (!$users->contains($user)) {
-                    $team->addUser($user);
-                    $manager->flush();
-                    return $team;
+            if ($user)
+                if ($team) {
+                    $users = $team->getUser();
+                    $users->initialize();
+                    if (!$users->contains($user)) {
+                        $team->addUser($user);
+                        $manager->flush();
+                        return $team;
+                    } else {
+                        return $team;
+                    }
                 } else {
                     return $team;
                 }
-            } else {
-                return $team;
-            }
         }
     }
 }

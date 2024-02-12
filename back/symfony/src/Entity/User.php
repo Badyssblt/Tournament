@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Controller\FindUserByEmailController;
 use App\Controller\RegisterController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,16 +23,46 @@ use Symfony\Component\Serializer\Attribute\Groups;
     read: false
 )]
 #[Get()]
+#[Get(
+    controller: FindUserByEmailController::class,
+    read: false,
+    uriTemplate: "/user/get/{email}",
+    openapiContext: [
+        'parameters' => [
+            [
+                'name' => 'email',
+                'in' => 'path',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string',
+                    'format' => 'email',
+                    'example' => 'test@example.com',
+                    'description' => "L'email qui est recherché"
+                ]
+            ],
+            [
+                'name' => 'id',
+                'in' => 'path',
+                'required' => false,
+                'schema' => [
+                    'type' => 'integer',
+                    'format' => 'integer',
+                ]
+            ]
+        ]
+    ]
+)]
 #[UniqueEntity(fields: "email", message: "Un utilisateur avec cet adresse email existe déjà.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['create:User'])]
+    #[Groups(['create:User', 'read:item:team'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['read:team:item'])]
     private ?string $email = null;
 
     #[ORM\Column]

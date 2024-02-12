@@ -10,11 +10,13 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\AddUserToTeamController;
 use App\Controller\CreateTeamController;
 use App\Controller\DeleteUserToTeamController;
+use App\Controller\MyTeamController;
 use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 #[ApiResource()]
@@ -22,7 +24,19 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     controller: CreateTeamController::class,
     read: false
 )]
-#[Get()]
+#[Get(
+    normalizationContext: ['groups' => ['read:team:item']],
+    security: "object.Creator == user"
+)]
+#[Get(
+    controller: MyTeamController::class,
+    read: false,
+    uriTemplate: "/team/myteam",
+    openapiContext: [
+        "summary" => "Récupère l'équipe d'un utilisateur"
+    ],
+    normalizationContext: ['groups' => ['read:team:item']]
+)]
 #[GetCollection()]
 #[Patch(
     controller: AddUserToTeamController::class,
@@ -48,12 +62,15 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:Tournament', 'read:team:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:Tournament', 'read:team:item'])]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'teams')]
+    #[Groups(['read:team:item'])]
     private Collection $User;
 
     #[ORM\OneToMany(mappedBy: 'targetTeam', targetEntity: TeamJoinRequest::class, orphanRemoval: true)]
@@ -61,29 +78,33 @@ class Team
 
     #[ORM\ManyToOne(inversedBy: 'Creator')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $Creator = null;
+    public ?User $Creator = null;
 
-
-    #[ORM\ManyToMany(targetEntity: Matche::class, mappedBy: 'team')]
-    private Collection $matche;
 
     #[ORM\ManyToMany(targetEntity: Matche::class, mappedBy: 'Team')]
     private Collection $matches;
 
-    #[ORM\OneToMany(mappedBy: 'Winner', targetEntity: Matche::class)]
-    private Collection $Winner;
 
     #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'Team')]
     private Collection $tournaments;
+
+    #[ORM\OneToMany(mappedBy: 'winnerTournament', targetEntity: Tournament::class)]
+    private Collection $winnerTournament;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $Score = null;
+
+    #[ORM\OneToMany(mappedBy: 'WinnerMatche', targetEntity: Matche::class)]
+    private Collection $WinnerMatche;
 
     public function __construct()
     {
         $this->User = new ArrayCollection();
         $this->teamJoinRequests = new ArrayCollection();
-        $this->matche = new ArrayCollection();
         $this->matches = new ArrayCollection();
-        $this->Winner = new ArrayCollection();
         $this->tournaments = new ArrayCollection();
+        $this->winnerTournament = new ArrayCollection();
+        $this->WinnerMatche = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -206,36 +227,6 @@ class Team
     }
 
     /**
-     * @return Collection<int, Matche>
-     */
-    public function getWinner(): Collection
-    {
-        return $this->Winner;
-    }
-
-    public function addWinner(Matche $winner): static
-    {
-        if (!$this->Winner->contains($winner)) {
-            $this->Winner->add($winner);
-            $winner->setWinner($this);
-        }
-
-        return $this;
-    }
-
-    public function removeWinner(Matche $winner): static
-    {
-        if ($this->Winner->removeElement($winner)) {
-            // set the owning side to null (unless already changed)
-            if ($winner->getWinner() === $this) {
-                $winner->setWinner(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Tournament>
      */
     public function getTournaments(): Collection
@@ -262,9 +253,75 @@ class Team
         return $this;
     }
 
+    /**
+     * @return Collection<int, Tournament>
+     */
+    public function getWinnerTournament(): Collection
+    {
+        return $this->winnerTournament;
+    }
 
+    public function addWinnerTournament(Tournament $winnerTournament): static
+    {
+        if (!$this->winnerTournament->contains($winnerTournament)) {
+            $this->winnerTournament->add($winnerTournament);
+            $winnerTournament->setWinnerTournament($this);
+        }
 
+        return $this;
+    }
 
+    public function removeWinnerTournament(Tournament $winnerTournament): static
+    {
+        if ($this->winnerTournament->removeElement($winnerTournament)) {
+            // set the owning side to null (unless already changed)
+            if ($winnerTournament->getWinnerTournament() === $this) {
+                $winnerTournament->setWinnerTournament(null);
+            }
+        }
 
+        return $this;
+    }
 
+    public function getScore(): ?float
+    {
+        return $this->Score;
+    }
+
+    public function setScore(?float $Score): static
+    {
+        $this->Score = $Score;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Matche>
+     */
+    public function getWinnerMatche(): Collection
+    {
+        return $this->WinnerMatche;
+    }
+
+    public function addWinnerMatche(Matche $winnerMatche): static
+    {
+        if (!$this->WinnerMatche->contains($winnerMatche)) {
+            $this->WinnerMatche->add($winnerMatche);
+            $winnerMatche->setWinnerMatche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWinnerMatche(Matche $winnerMatche): static
+    {
+        if ($this->WinnerMatche->removeElement($winnerMatche)) {
+            // set the owning side to null (unless already changed)
+            if ($winnerMatche->getWinnerMatche() === $this) {
+                $winnerMatche->setWinnerMatche(null);
+            }
+        }
+
+        return $this;
+    }
 }

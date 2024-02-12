@@ -7,6 +7,7 @@ use App\Repository\MatcheRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MatcheRepository::class)]
 #[ApiResource]
@@ -15,6 +16,7 @@ class Matche
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:tournament'])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -25,13 +27,17 @@ class Matche
     private ?Tournament $tournament = null;
 
     #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'matches')]
+    #[Groups(['read:Tournament'])]
     private Collection $Team;
 
-    #[ORM\ManyToOne(inversedBy: 'Winner')]
-    private ?Team $Winner = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:Tournament'])]
     private ?int $round = null;
+
+    #[ORM\ManyToOne(inversedBy: 'WinnerMatche')]
+    #[Groups(['read:Tournament'])]
+    private ?Team $WinnerMatche = null;
 
 
 
@@ -39,7 +45,6 @@ class Matche
     {
         $date = new \DateTimeImmutable();
         $this->setDate($date);
-        $this->team = new ArrayCollection();
         $this->Team = new ArrayCollection();
     }
 
@@ -95,19 +100,6 @@ class Matche
 
         return $this;
     }
-
-    public function getWinner(): ?Team
-    {
-        return $this->Winner;
-    }
-
-    public function setWinner(?Team $Winner): static
-    {
-        $this->Winner = $Winner;
-
-        return $this;
-    }
-
     public function getRound(): ?int
     {
         return $this->round;
@@ -120,7 +112,15 @@ class Matche
         return $this;
     }
 
+    public function getWinnerMatche(): ?Team
+    {
+        return $this->WinnerMatche;
+    }
 
+    public function setWinnerMatche(?Team $WinnerMatche): static
+    {
+        $this->WinnerMatche = $WinnerMatche;
 
-
+        return $this;
+    }
 }
