@@ -16,6 +16,7 @@ class NextRoundController extends AbstractController
         $tournament = $tournamentRepository->find($id);
         $data = $tournament->getMatche();
 
+
         $matches = [];
 
         foreach ($data as $matche) {
@@ -24,7 +25,6 @@ class NextRoundController extends AbstractController
             }
         }
         $nextRound = $roundId + 1;
-
         $matchesNextRound = [];
 
         foreach ($data as $match) {
@@ -48,15 +48,17 @@ class NextRoundController extends AbstractController
         $winners = [];
         foreach ($matches as $match) {
             if ($match->getRound() == $roundId && $match->getWinnerMatche() !== null) {
-                $winners[] = $match->getWinnerMatche();
+                array_unshift($winners, $match->getWinnerMatche());
             }
         }
+
+
 
         if (count($winners) == 1) {
             $tournament->setWinnerTournament($winners[0]);
             $manager->persist($tournament);
             $manager->flush();
-            dd($winners);
+
             return $this->json(['message' => 'Le gagnant a été définie.', $tournament]);
         }
 
@@ -84,7 +86,6 @@ class NextRoundController extends AbstractController
 
         $manager->flush();
 
-        // Retournez une réponse réussie si tout s'est bien passé
         return $this->json(['message' => 'Nouveaux matchs créés avec succès.']);
     }
 }
