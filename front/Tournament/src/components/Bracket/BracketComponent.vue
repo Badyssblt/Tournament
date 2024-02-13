@@ -4,13 +4,19 @@
       <template v-for="(match, index) in matchesInRound" :key="index">
         <div class="bracket-team__wrapper"
              :ref="`match-${roundNumber}-${index}`"
-             :class="['round-' + roundNumber + '-' + (index + 1), 'round-' + roundNumber]">
+             :class="[
+               'round-' + roundNumber + '-' + (index + 1),
+               'round-' + roundNumber,
+               {'even': (index + 1) % 2 == 0 && roundNumber == 1, 'odd': (index + 1) % 2 !== 0 && roundNumber == 1}
+             ]">
           <bracket-team-component :data="match" v-if="matches && matches.length > 0"/>
         </div>
       </template>
     </template>
   </div>
 </template>
+
+
 
 
 <script>
@@ -148,31 +154,31 @@ export default {
   }
 
   .round-2-2 {
-    grid-row: 4;
-  }
-
-  .round-2-3 {
     grid-row: 6;
   }
 
-  .round-2-4 {
-    grid-row: 8;
-  }
-
-  .round-2-5 {
+  .round-2-3 {
     grid-row: 10;
   }
 
+  .round-2-4 {
+    grid-row: 14;
+  }
+
+  .round-2-5 {
+    grid-row: 18;
+  }
+
   .round-3-1 {
-    grid-row: 3;
+    grid-row: 4;
   }
 
   .round-3-2 {
-    grid-row: 7;
+    grid-row: 12;
   }
 
   .round-3-3 {
-    grid-row: 9;
+    grid-row: 12;
   }
 
 .round-3 {
@@ -182,4 +188,95 @@ export default {
   .round-3:nth-child(11){
     background: red;
   }
+
+  .bracket-team__wrapper {
+    width: fit-content;
+  }
+
+  .odd::after {
+    position: absolute;
+    content: "";
+    width: 30%;
+    height: 2px;
+    right: -40px;
+    top: 50%;
+    bottom: 50%;
+    background: white;
+  }
+
+  .odd::before {
+    position: absolute;
+    content: "";
+    width: 50%;
+    height: 2px;
+    transform: rotate(90deg);
+    right: -50%;
+    bottom: -10px;
+    background: white;
+  }
+
+  .even::after {
+    position: absolute;
+    content: "";
+    width: 30%;
+    height: 2px;
+    right: -40px;
+    top: 50%;
+    bottom: 50%;
+    background: white;
+  }
+
+  .even::before {
+    position: absolute;
+    content: "";
+    width: 60%;
+    height: 2px;
+    transform: rotate(90deg);
+    right: -55%;
+    top: -15px;
+    background: white;
+  }
+
+  .round-2 {
+    position: relative;
+  }
+
+  .round-2::before {
+    position: absolute;
+    content: "";
+    width: 145%;
+    height: 2px;
+    left: -143%;
+    top: 50%;
+    bottom: 50%;
+    background: white;
+  }
+
+.round-2:nth-child(odd)::after {
+    position: absolute;
+    content: "";
+    width: 30px;
+    right: -20px;
+    top: 50%;
+    bottom: 50%;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    height: 350px;
+}
+
+.round-3 {
+  position: relative;
+}
+
+.round-3::before {
+  position: absolute;
+  content: "";
+  width: 160%;
+  height: 2px;
+  left: -156%;
+  top: 50%;
+  bottom: 50%;
+  background: white;
+}
 </style>

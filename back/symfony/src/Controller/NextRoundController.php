@@ -34,7 +34,7 @@ class NextRoundController extends AbstractController
         }
 
         foreach ($matches as $match) {
-            if ($match->getWinner() === null) {
+            if ($match->getWinnerMatche() === null) {
                 return $this->json(['message' => 'Tous les matchs du round ' . $roundId . ' doivent être finis pour créer de nouveaux matchs.'], Response::HTTP_UNAUTHORIZED);
             }
         }
@@ -47,8 +47,8 @@ class NextRoundController extends AbstractController
 
         $winners = [];
         foreach ($matches as $match) {
-            if ($match->getRound() == $roundId && $match->getWinner() !== null) {
-                $winners[] = $match->getWinner();
+            if ($match->getRound() == $roundId && $match->getWinnerMatche() !== null) {
+                $winners[] = $match->getWinnerMatche();
             }
         }
 
@@ -87,6 +87,4 @@ class NextRoundController extends AbstractController
         // Retournez une réponse réussie si tout s'est bien passé
         return $this->json(['message' => 'Nouveaux matchs créés avec succès.']);
     }
-
-
 }
