@@ -47,10 +47,7 @@ export default {
       });
       return groupedMatches;
     };
-
-    onMounted(() => {
-      // Ajoutez du code d'initialisation si nécessaire
-    });
+    
 
     return {
       matches,
@@ -262,7 +259,7 @@ export default {
     border-top: 2px solid white;
     border-right: 2px solid white;
     border-bottom: 2px solid white;
-    height: 350px;
+    height: 341px;
 }
 
 .round-3 {

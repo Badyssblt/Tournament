@@ -77,6 +77,7 @@ class Tournament
     private Collection $Team;
 
     #[ORM\ManyToOne(inversedBy: 'tournaments')]
+    #[Groups(['read:Tournament'])]
     private ?User $CreatorTournament = null;
 
     #[ORM\ManyToOne(inversedBy: 'winnerTournament')]

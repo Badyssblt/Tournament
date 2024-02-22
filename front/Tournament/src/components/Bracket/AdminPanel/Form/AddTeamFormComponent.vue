@@ -1,0 +1,272 @@
+<template>
+    <div class="admin-wrapper">
+        <aside>
+            <div class="dashboard-menu__item">
+                <button @click="showMenu('teams')">Ajouter une équipe</button>
+            </div>
+            <div class="dashboard-menu__item">
+                <button @click="showMenu('launch')">Gérer les rounds</button>
+            </div>
+            <div class="dashboard-menu__item">
+                <button @click="showMenu('conf')">Confidentialité</button>
+            </div>
+        </aside>
+<div>
+    <div class="admin-container" v-if="activeContent == 'teams'">
+        <form @submit.prevent="searchTeam">
+            <div class="form-input">
+                <label for="team">Rechercher une équipe</label>
+                <input type="text" name="team" id="team" v-model="name" autocomplete="off">
+            </div>
+            <input type="submit" value="Rechercher">
+        </form>
+        <div class="result-container">
+            <div class="result-wrapper" v-show="result.length > 0">
+                <p class="result-title" v-if="result.length == 1">Résultat</p>
+                <p class="result-title" v-else>Résultats</p>
+                <div class="result-item" v-for="item in result" :key="item.id">
+                    <p class="result-name">{{ item.name }}</p>
+                    <button @click="addTeams(item.id, item)" v-if="!item.isCheck"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
+                    <button v-else><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256">
+<g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M41.9375,8.625c-0.66406,0.02344 -1.27344,0.375 -1.625,0.9375l-18.8125,28.78125l-12.1875,-10.53125c-0.52344,-0.54297 -1.30859,-0.74609 -2.03125,-0.51953c-0.71875,0.22266 -1.25391,0.83203 -1.37891,1.57422c-0.125,0.74609 0.17578,1.49609 0.78516,1.94531l13.9375,12.0625c0.4375,0.37109 1.01563,0.53516 1.58203,0.45313c0.57031,-0.08594 1.07422,-0.41016 1.38672,-0.89062l20.09375,-30.6875c0.42969,-0.62891 0.46484,-1.44141 0.09375,-2.10547c-0.37109,-0.66016 -1.08594,-1.05469 -1.84375,-1.01953z"></path></g></g>
+</svg></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="admin-container" v-show="activeContent == 'launch'">
+        <p>Contenu de la partie des rounds</p>
+    </div>
+    <div class="admin-container" v-show="activeContent == 'conf' ">
+        <p>Contenu de Confidentialité</p>
+    </div>
+</div>
+  
+    </div>
+    
+</template>
+
+<script>
+import axios from 'axios'
+import _const from '@/const.js';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+export default {
+    name: "AddTeamFormComponent",
+    props: {
+        teams: {
+            required: true,
+            type: Array
+        }
+    },
+    setup(props){
+        const token = localStorage.getItem('token');
+        const name = ref("");
+        const result = ref([]);
+        const activeContent = ref('');
+        const id = ref(0);
+        const route = useRoute(); 
+        const teams = ref(props.teams);
+
+
+
+        onMounted(() => {
+            id.value = route.params.id;
+        })
+        const searchTeam = async () => {
+            try {
+                const res = await axios({
+                    url: _const.axios + '/teams?name=' + name.value,
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': axios.content
+                    }
+                });
+                if(res.data){
+                    result.value = res.data['hydra:member'];
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        const showMenu = (content) => {
+            activeContent.value = content;
+        }
+        const addTeams = async (teamId, item) => {
+            if(teams.value[0] && teams.value[0]["@id"]){
+                console.log(teams.value);
+                const teamIds = teams.value.map(team => team['@id']);
+                const formattedTeamData = ref([]);
+                teams.value.forEach(team => {
+                    formattedTeamData.value.push(team['@id']);
+                });
+                formattedTeamData.value.push('/api/teams/' + teamId);
+                console.log(formattedTeamData.value);
+                try {
+                const res = await axios({
+                    url: _const.axios + '/tournaments/' + id.value,
+                    method: 'patch',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.patchContent
+                    },
+                    data: {
+                        Team: formattedTeamData.value
+                    }
+                });
+                teams.value = res.data.Team;
+                formattedTeamData.value = [];
+                item.isCheck = true;
+            } catch (error) {
+            }
+            }else {
+                const formattedTeamData = ref([]);
+                formattedTeamData.value = teams.value;
+                formattedTeamData.value.push('/api/teams/' + teamId);
+                console.log(formattedTeamData.value);
+                try {
+                const res = await axios({
+                    url: _const.axios + '/tournaments/' + id.value,
+                    method: 'patch',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.patchContent
+                    },
+                    data: {
+                        Team: formattedTeamData.value
+                    }
+                });
+                teams.value = res.data.Team;
+                item.isCheck = true;
+            } catch (error) {
+            }
+            }
+            
+        }
+
+        return {
+            name,
+            searchTeam,
+            result,
+            activeContent,
+            showMenu,
+            addTeams,
+        }
+    }
+}
+</script>
+
+<style scoped>
+    .admin-wrapper {
+        display: flex;
+        flex-direction: row;
+        margin-top: 30px;
+        gap: 40px;
+    }
+
+
+    aside {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    form {
+        grid-row: 2;
+        grid-column: 5/ 12;
+        z-index: 3;
+        color: var(--text-color);
+    }
+
+    .form-input {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dashboard-menu__item {
+        display: flex;
+        background: var(--secondary-color);
+        font-family: var(--font-family);
+        height: 30px;
+        border-radius: 5px;
+    }
+
+    .dashboard-menu__item button {
+        background: none;
+        font-family: var(--font-family);
+        color: var(--text-color);
+        border: none;
+        outline: none;
+    }
+
+    #team {
+        width: 300px;
+        background-color: var(--secondary-color);
+        outline: none;
+        border-radius: 40px;
+        border: none;
+        padding: 5px 10px;
+        padding-left: 30px;
+        font-family: var(--font-family);
+        color: var(--text-color);
+        background-image: url('@/assets/images/search.png');
+        background-repeat: no-repeat;
+        background-position: 10px;
+    }
+
+    .result-item button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+       padding: 0;
+       width: 20px;
+       height: 20px;
+    }
+
+    svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    input[type=submit]{
+        padding: 5px 10px;
+        background: var(--secondary-color);
+        font-family: var(--font-family);
+        color: var(--text-color);
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        margin-top: 20px;
+    }
+
+    .result-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .result-title {
+        color: var(--text-color);
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+
+    .result-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 200px;
+        padding: 5px 10px;
+        background: var(--secondary-color);
+        color: var(--text-color);
+        border-radius: 5px;
+    }
+
+    .result-item button {
+        background: var(--secondary-color);
+        color: var(--text-color);
+        border: 2ch solid white;
+        border-radius: 50%;
+        outline: none;
+    }
+</style>
