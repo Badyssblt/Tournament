@@ -39,7 +39,7 @@ export default {
         gap: 30px;
         padding: 30px 20px;
         border-radius: 10px;
-        background: rgb(26, 11, 11);    
+        background: var(--form-color);    
     }
     .card-info {
         display: flex;
@@ -67,7 +67,7 @@ export default {
         padding: 5px 15px;
         background: var(--secondary-color);
         border: 2px solid transparent;
-        color: var(--text-color);
+        color: var(--background-color);
         font-family: var(--font-family);
         outline: none;
         font-size: 1em;

@@ -13,9 +13,10 @@
         </aside>
 <div>
     <div class="admin-container" v-if="activeContent == 'teams'">
+        <div class="admin-form__containers">
         <form @submit.prevent="searchTeam">
             <div class="form-input">
-                <label for="team">Rechercher une équipe</label>
+                <label for="team" class="title-bold">Rechercher une équipe</label>
                 <input type="text" name="team" id="team" v-model="name" autocomplete="off">
             </div>
             <input type="submit" value="Rechercher">
@@ -33,9 +34,19 @@
                 </div>
             </div>
         </div>
+        </div>
+        <div class="admin-container__teams" v-if="teamsInTournament && Object.keys(teamsInTournament)">
+            <p class="title-bold">Équipes inscrites</p>
+            <div class="admin-wrappers__teams">
+                <div class="admin-containers__teams-item" v-for="item in teamsInTournament">
+                    <p>{{ item.name }}</p>
+                </div>
+            </div>
+
+        </div>
     </div>
     <div class="admin-container" v-show="activeContent == 'launch'">
-        <p>Contenu de la partie des rounds</p>
+        <admin-round-component/>
     </div>
     <div class="admin-container" v-show="activeContent == 'conf' ">
         <p>Contenu de Confidentialité</p>
@@ -51,7 +62,9 @@ import axios from 'axios'
 import _const from '@/const.js';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import AdminRoundComponent from './AdminRoundComponent.vue';
 export default {
+  components: { AdminRoundComponent },
     name: "AddTeamFormComponent",
     props: {
         teams: {
@@ -67,19 +80,39 @@ export default {
         const id = ref(0);
         const route = useRoute(); 
         const teams = ref(props.teams);
+        const data = ref([]);
+        const teamsInTournament = ref([]);
 
-
-
-        onMounted(() => {
+        onMounted(async () => {
             id.value = route.params.id;
-        })
+            teamsInTournament.value = props.teams;
+        });
+
+
+        const getTeams = async ()=> {
+            try {
+                const res = await axios({
+                    url: _const.axios + '/tournaments/' + id.value,
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.content
+                    }
+                });
+                if(res.data){
+                    teamsInTournament.value = res.data.Team;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         const searchTeam = async () => {
             try {
                 const res = await axios({
                     url: _const.axios + '/teams?name=' + name.value,
                     headers: {
                         'Authorization': 'Bearer ' + token,
-                        'Content-Type': axios.content
+                        'Content-Type': _const.content
                     }
                 });
                 if(res.data){
@@ -118,6 +151,7 @@ export default {
                 teams.value = res.data.Team;
                 formattedTeamData.value = [];
                 item.isCheck = true;
+                getTeams();
             } catch (error) {
             }
             }else {
@@ -139,6 +173,7 @@ export default {
                 });
                 teams.value = res.data.Team;
                 item.isCheck = true;
+                getTeams();
             } catch (error) {
             }
             }
@@ -152,6 +187,7 @@ export default {
             activeContent,
             showMenu,
             addTeams,
+            teamsInTournament
         }
     }
 }
@@ -194,24 +230,65 @@ export default {
     .dashboard-menu__item button {
         background: none;
         font-family: var(--font-family);
-        color: var(--text-color);
+        padding: 5px 15px;
+        color: var(--background-color);
         border: none;
         outline: none;
     }
 
+    .admin-container {
+        padding: 20px 30px;
+        box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
     #team {
         width: 300px;
-        background-color: var(--secondary-color);
+        background-color: var(--accent-color);
         outline: none;
         border-radius: 40px;
         border: none;
         padding: 5px 10px;
         padding-left: 30px;
         font-family: var(--font-family);
-        color: var(--text-color);
+        color: var(--background-color);
         background-image: url('@/assets/images/search.png');
         background-repeat: no-repeat;
         background-position: 10px;
+    }
+
+    .admin-container__teams {
+        display: flex;
+        flex-direction: column;
+        width: 400px;
+        gap: 5px;
+    }
+
+    .title-bold {
+        font-weight: bold;
+    }
+
+    .admin-wrappers__teams {
+        display: flex;
+        flex-wrap: wrap;
+        width: 90%;
+    }
+
+    .admin-form__containers {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .admin-containers__teams-item {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        width: fit-content;
+        height: fit-content;
     }
 
     .result-item button {
@@ -229,14 +306,23 @@ export default {
     }
 
     input[type=submit]{
-        padding: 5px 10px;
+        padding: 5px 15px;
         background: var(--secondary-color);
         font-family: var(--font-family);
-        color: var(--text-color);
-        border: none;
+        color: var(--background-color);
+        border: 2px solid transparent;
         border-radius: 20px;
         outline: none;
         margin-top: 20px;
+        cursor: pointer;
+        transition: all .3s ease;
+        font-weight: bold;
+    }
+
+    input[type=submit]:hover {
+        background: none;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
     }
 
     .result-wrapper {
@@ -257,9 +343,13 @@ export default {
         justify-content: space-between;
         width: 200px;
         padding: 5px 10px;
-        background: var(--secondary-color);
+        background: var(--accent-color);
         color: var(--text-color);
         border-radius: 5px;
+    }
+
+    .result-name {
+        color: var(--primary-color);
     }
 
     .result-item button {
@@ -269,4 +359,6 @@ export default {
         border-radius: 50%;
         outline: none;
     }
+
+
 </style>

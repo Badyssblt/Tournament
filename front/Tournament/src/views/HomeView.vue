@@ -40,7 +40,7 @@ export default {
   
   #main-title {
     font-family: Zaio;
-    color: var(--accent-color);
+    color: var(--primary-color);
     font-size: 4em;
     text-align: center;
   }

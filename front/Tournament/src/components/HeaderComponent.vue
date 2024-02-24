@@ -141,8 +141,19 @@ export default {
     }
     #connect {
         padding: 10px;
-        color: var(--text-color);
+        color: var(--background-color);
         background-color: var(--secondary-color);
+        border-radius: 20px;
+        border: 2px solid transparent;
+        padding: 5px 15px;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+
+    #connect:hover {
+        border: 2px solid var(--primary-color);
+        background: none;
+        color: var(--primary-color);
     }
     
 </style>

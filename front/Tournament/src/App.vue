@@ -24,12 +24,24 @@ import { RouterLink, RouterView } from 'vue-router'
 
   :root {
     --font-family: Montserrat;
-    --background-color: #0E0606;
-    --primary-color: #DC969B;
-    --secondary-color: #852229;
-    --accent-color: #D72D38;
-    --text-color: #F3E8E9;
-    --form-color: #1A0B0B;
+    --background-color: #FFFFFF;
+    --primary-color: #757de8;
+    --secondary-color: #3F51B5;
+    --accent-color: #dedeff;
+    --text-color: #333333;
+    --form-color: #f5f5f5;
+/* 
+    --primary-100:#3F51B5;
+    --primary-200:#757de8;
+    --primary-300:#dedeff;
+    --accent-100:#2196F3;
+    --accent-200:#003f8f;
+    --text-100:#333333;
+    --text-200:#5c5c5c;
+    --bg-100:#FFFFFF;
+    --bg-200:#f5f5f5;
+    --bg-300:#cccccc; */
+      
   }
 
     html {

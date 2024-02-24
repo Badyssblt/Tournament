@@ -101,7 +101,7 @@ export default {
 
     .tournament-menu__content {
         width: 100%;
-        background: #1A0B0B;
+        background: var(--form-color);
         padding: 30px;
         border-radius: 20px;
     }
@@ -131,7 +131,7 @@ export default {
         align-items: center;
         width: 40px;
         height: 40px;
-        background: var(--text-color);
+        background: var(--background-color);
         border-radius: 50%;
         color: black;
     }

@@ -4,12 +4,12 @@
         <p class="form-title">Se connecter</p>
         <div class="input-container">
             <label for="email">Email</label>
-            <input type="text" name="email" id="email" autocomplete="off" v-model="email">
+            <input type="text" name="email" id="email" autocomplete="off" v-model="email" class="input">
         </div>
         
         <div class="input-container">
             <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" v-model="password">
+            <input type="password" name="password" id="password" v-model="password" class="input">
         </div>
         <button type="submit">Se connecter</button>
         
@@ -66,7 +66,7 @@ export default {
         display: flex;
         flex-direction: column;
         width: 300px;
-        background: rgb(26, 11, 11);   
+        background: var(--form-color);   
         padding: 20px;
         border-radius: 10px;
         grid-row: 2;
@@ -75,7 +75,7 @@ export default {
     }
 
     .form-title {
-        color: white;
+        color: var(--primary-color);
         font-size: 1.2em;
         font-weight: bold;
         letter-spacing: 2px;
@@ -90,11 +90,32 @@ export default {
         color: var(--text-color);
     }
 
-    input {
+    .input {
         border: none;
         outline: none;
         padding: 5px 10px;
+        border-radius: 20px;
         font-family: var(--font-family);
+        background: var(--accent-color);
+        color: var(--primary-color);
+    }
+
+    button{
         background: var(--primary-color);
+        color: var(--background-color);
+        font-family: var(--font-family);
+        font-weight: bold;
+        border: 2px solid transparent;
+        outline: none;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: all .3s ease;
+        cursor: pointer;
+    }
+
+    button:hover {
+        border: 2px solid var(--primary-color);
+        background: none;
+        color: var(--primary-color);
     }
 </style>

@@ -6,7 +6,7 @@
 
   </div>
   <div class="tournament-container">
-    <bracket-component :data="matches" v-if="matches && matches.length > 0"/>
+    <bracket-component :data="matches" v-if="matches && matches.length > 0" :adminShowed="adminShowed" @reload-teams="handleReloadTeams" :key="matches"/>
   </div>
 </template>
 
@@ -60,11 +60,16 @@ export default {
                     }
                 });
                 data.value = res.data;
+                console.log(data.value);
                 sortData(res.data);
                 showAdmin(res.data.CreatorTournament);
             } catch (error) {
                 console.error(error);
             }
+        }
+
+        const handleReloadTeams = async () => {
+            await getData();
         }
 
         const sortData = (tournamentData) => {
@@ -98,7 +103,8 @@ export default {
             teamForm,
             toggleTeamForm,
             adminShowed,
-            data
+            data,
+            handleReloadTeams
         }
     }
 }
@@ -108,6 +114,7 @@ export default {
     .tournament-container {
         grid-row: 2;
         grid-column: 2 / 12;
+        margin-top: 90px;
     }
 
     .admin-container {
@@ -117,6 +124,9 @@ export default {
         grid-row: 2;
         grid-column: 2 / 12;
         z-index: 3;
+        height: fit-content;
+        width: fit-content;
+        z-index: 20;
     }
 
     #admin-button {
