@@ -11,6 +11,9 @@
             <div class="dashboard-menu__item">
                 <button @click="showMenu('signup')">Mes inscriptions</button>
             </div>
+            <div class="dashboard-menu__item">
+                <button @click="logout">Se déconnecter</button>
+            </div>
         </aside>
         
     </div>
@@ -68,10 +71,12 @@ import { onMounted, ref } from 'vue';
 import axios from "axios";
 import _const from "@/const.js";
 import AsideRightDashboard from './AsideRightDashboard.vue';
+import { useRouter } from 'vue-router';
+
 export default {
   components: { AsideRightDashboard },
     name: "MenuDashboard",
-    setup(){
+    setup(context){
         const activeContent = ref('');
         const token = localStorage.getItem('token');
         const team = ref({});
@@ -79,7 +84,7 @@ export default {
         const searchEmail = ref('');
         const findUserMessage = ref('');
         const name = ref('');
-        console.log(userResult);
+        const router = useRouter();
 
         const showMenu = (content) => {
             activeContent.value = content;
@@ -162,6 +167,13 @@ export default {
                 console.error(error);
             }
         }
+        const logout = () => {
+            if(token){
+                localStorage.setItem('token', '');
+                router.push('/');
+                console.log('deconnecter');
+            }
+        }
 
         onMounted(async () => {
             await getTeam();
@@ -179,7 +191,8 @@ export default {
             sendInvite,
             findUserMessage,
             createTeam,
-            name
+            name,
+            logout
         }
     }
 }

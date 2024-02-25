@@ -1,7 +1,7 @@
 <template>
     <div class="bracket-team__container" v-if="Object.keys(match)">
-        <div class="team-container" v-for="item in teams" :class="{ 'winner-team': item['@id'] === match.WinnerMatche['@id'] }">
-            <p >{{ item.name }}</p>
+        <div class="team-container" v-for="item in teams" :class="{ 'winner-team': match.WinnerMatche && item['@id'] === match.WinnerMatche['@id'] }">
+            <p>{{ item.name }}</p>
         </div>
     </div>
 </template>
@@ -19,6 +19,7 @@ export default {
     setup(props){
         const match = props.data;
         const teams = match.Team;
+        console.log();
         return {
             match,
             teams

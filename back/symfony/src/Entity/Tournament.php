@@ -12,11 +12,14 @@ use ApiPlatform\Metadata\Post;
 use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
 use App\Controller\NextRoundController;
+use App\Dto\TeamUpdateDto;
 use App\Repository\TournamentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints\TeamsCount;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
 #[ApiResource()]
@@ -74,6 +77,7 @@ class Tournament
 
     #[ORM\ManyToMany(targetEntity: Team::class, inversedBy: 'tournaments')]
     #[Groups(['read:Tournament'])]
+    #[TeamsCount]
     private Collection $Team;
 
     #[ORM\ManyToOne(inversedBy: 'tournaments')]
