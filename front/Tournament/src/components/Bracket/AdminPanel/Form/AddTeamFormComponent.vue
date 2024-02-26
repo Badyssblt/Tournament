@@ -48,10 +48,10 @@
         </div>
     </div>
     <div class="admin-container" v-show="activeContent == 'launch'">
-        <admin-round-component/>
+        <admin-round-component @reloadTeams="reloadTeams"/>
     </div>
     <div class="admin-container" v-show="activeContent == 'conf' ">
-        <p>Contenu de Confidentialité</p>
+        <confidential-form-component/>
     </div>
 </div>
   
@@ -65,8 +65,9 @@ import _const from '@/const.js';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import AdminRoundComponent from './AdminRoundComponent.vue';
+import ConfidentialFormComponent from './ConfidentialFormComponent.vue';
 export default {
-  components: { AdminRoundComponent },
+  components: { AdminRoundComponent, ConfidentialFormComponent },
     name: "AddTeamFormComponent",
     props: {
         teams: {
@@ -74,7 +75,7 @@ export default {
             type: Array
         }
     },
-    setup(props){
+    setup(props, context){
         const token = localStorage.getItem('token');
         const name = ref("");
         const result = ref([]);
@@ -92,7 +93,9 @@ export default {
             teamsInTournament.value = props.teams;
         });
 
-
+        const reloadTeams = () => {
+            context.emit('reloadTeams');
+        }
         const getTeams = async ()=> {
             try {
                 const res = await axios({
@@ -197,7 +200,8 @@ export default {
             addTeams,
             teamsInTournament,
             isAdd,
-            message
+            message,
+            reloadTeams
         }
     }
 }

@@ -29,7 +29,7 @@ import axios from 'axios';
 import { useRoute } from 'vue-router';
 export default {
     name: "AdminRoundComponent",
-    setup(){
+    setup(props, context){
         const route = useRoute();
         const id = ref(0);
         const round = ref(0);
@@ -45,9 +45,12 @@ export default {
                         'Authorization': 'Bearer ' + token
                     }
                 });
-                console.log(res);
+                isSuccess.value = true;
+                message.value = 'Le tournoi a été lancée, les matchs sont crées !';
+                context.emit('reloadTeams');
             } catch (error) {
-                console.error(error);
+                isSuccess.value = true;
+                message.value = 'Le tournoi est déjà lancée !';
             }
         }
         
@@ -63,7 +66,8 @@ export default {
                     isSuccessRound.value = true;
                     console.log(round.value + 1);
                     message.value = 'Les matchs du round ' + (round.value + 1) + ' ont été générés';
-                }
+                };
+                context.emit('reloadTeams');
             } catch (error) {
                 console.error(error);
             }
