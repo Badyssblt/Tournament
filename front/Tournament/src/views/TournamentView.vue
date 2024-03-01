@@ -29,6 +29,7 @@ import TournamentMenuComponent from '../components/TournamentMenuComponent.vue';
 export default {
     name: "TournamentView",
     components: { HeaderComponent, TournamentMenuComponent },
+    title: 'Tournoi',
     setup(){
         const route = useRoute();
         const data = ref({});

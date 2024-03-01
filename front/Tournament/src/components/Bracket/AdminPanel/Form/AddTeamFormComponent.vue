@@ -28,7 +28,7 @@
                 <p class="result-title" v-else>Résultats</p>
                 <div class="result-item" v-for="item in result" :key="item.id">
                     <p class="result-name">{{ item.name }}</p>
-                    <button @click="addTeams(item.id, item)" v-if="!item.isCheck"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
+                    <button @click="addTeams(item.id, item)" v-if="!item.isCheck"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg></button>
                     <button v-else><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0,0,256,256">
 <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.12,5.12)"><path d="M41.9375,8.625c-0.66406,0.02344 -1.27344,0.375 -1.625,0.9375l-18.8125,28.78125l-12.1875,-10.53125c-0.52344,-0.54297 -1.30859,-0.74609 -2.03125,-0.51953c-0.71875,0.22266 -1.25391,0.83203 -1.37891,1.57422c-0.125,0.74609 0.17578,1.49609 0.78516,1.94531l13.9375,12.0625c0.4375,0.37109 1.01563,0.53516 1.58203,0.45313c0.57031,-0.08594 1.07422,-0.41016 1.38672,-0.89062l20.09375,-30.6875c0.42969,-0.62891 0.46484,-1.44141 0.09375,-2.10547c-0.37109,-0.66016 -1.08594,-1.05469 -1.84375,-1.01953z"></path></g></g>
 </svg></button>
@@ -41,6 +41,7 @@
             <p class="title-bold">Équipes inscrites</p>
             <div class="admin-wrappers__teams">
                 <div class="admin-containers__teams-item" v-for="item in teamsInTournament">
+                    <button class="close"><svg class="svg-hover" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="#757de8" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
                     <p>{{ item.name }}</p>
                 </div>
             </div>
@@ -235,19 +236,28 @@ export default {
 
     .dashboard-menu__item {
         display: flex;
-        background: var(--secondary-color);
         font-family: var(--font-family);
         height: 30px;
-        border-radius: 5px;
     }
 
     .dashboard-menu__item button {
         background: none;
+        width: 170px;
+        border-radius: 20px;
         font-family: var(--font-family);
+        background: var(--secondary-color);
         padding: 5px 15px;
         color: var(--background-color);
-        border: none;
+        border: 2px solid transparent;
         outline: none;
+        transition: all .1s ease;
+        cursor: pointer;
+    }
+
+    .dashboard-menu__item button:hover {
+        background: none;
+        color: var(--primary-color);
+        border: 2px solid var(--secondary-color);
     }
 
     .admin-container {
@@ -288,6 +298,7 @@ export default {
     .admin-wrappers__teams {
         display: flex;
         flex-wrap: wrap;
+        gap: 10px;
         width: 90%;
     }
 
@@ -297,13 +308,32 @@ export default {
     }
 
     .admin-containers__teams-item {
+        position: relative;
         background: var(--accent-color);
         color: var(--primary-color);
-        padding: 5px 15px;
+        padding: 6px 20px;
         border-radius: 20px;
         width: fit-content;
         height: fit-content;
     }
+
+    
+    .close {
+        position: absolute;
+        right: 0;
+        top: 2px;
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+    .close:hover {
+        opacity: .7;
+        transform: scale(1.1);
+    }
+
 
     .result-item button {
         display: flex;

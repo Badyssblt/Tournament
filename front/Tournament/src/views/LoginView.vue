@@ -12,7 +12,7 @@
             <input type="password" name="password" id="password" v-model="password" class="input">
         </div>
         <button type="submit">Se connecter</button>
-        
+        <router-link to="/register" class="connexion"> Ou s'inscrire</router-link>
     </form>
 </template>
 
@@ -56,7 +56,8 @@ export default {
         email,
         password
     }
-  }
+  },
+  title: 'Connexion'
 
 }
 </script>
@@ -117,5 +118,19 @@ export default {
         border: 2px solid var(--primary-color);
         background: none;
         color: var(--primary-color);
+    }
+
+    .connexion {
+        color: var(--primary-color);
+        opacity: .8;
+        font-size: 12px;
+        transition: all .2s ease;
+        text-align: center;
+    }
+
+    .connexion:hover {
+        text-decoration: underline;
+        font-weight: bold;
+        opacity: 1;
     }
 </style>
