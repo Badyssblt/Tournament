@@ -2,23 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
+
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\GetCollectionTournamentController;
 use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
 use App\Controller\NextRoundController;
-use App\Dto\TeamUpdateDto;
+use App\Controller\RetrieveTournamentController;
 use App\Repository\TournamentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints\TeamsCount;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
@@ -27,8 +27,16 @@ use App\Validator\Constraints\TeamsCount;
     normalizationContext: ['groups' => ['read:Tournament']]
 )]
 #[GetCollection(
-    normalizationContext: ['groups' => ['read:collection']]
+    normalizationContext: ['groups' => ['read:collection']],
+    controller: GetCollectionTournamentController::class,
+    read: false
 )]
+#[GetCollection(
+    uriTemplate: "/tournament/myTournament",
+    controller: RetrieveTournamentController::class,
+    read: false
+)]
+
 #[GetCollection(
     uriTemplate: "tournaments/{id}/getMatch",
     read: false,
@@ -94,6 +102,10 @@ class Tournament
     #[ORM\Column]
     #[Groups(['read:collection', 'read:Tournament'])]
     private ?int $maxTeams = null;
+
+    #[ORM\Column]
+    #[Groups(['read:collection', 'read:Tournament'])]
+    private ?bool $visibility = null;
 
     public function __construct()
     {
@@ -242,4 +254,17 @@ class Tournament
 
         return $this;
     }
+
+    public function isVisibility(): ?bool
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(bool $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
 }

@@ -60,7 +60,8 @@ export default {
                 const res = await axios.patch(_const.axios + '/tournaments/' + id.value, {
                     name: name.value,
                     image: imageLink.value,
-                    maxTeams: maxTeams.value
+                    maxTeams: maxTeams.value,
+                    visibility: visibility.value
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + token,

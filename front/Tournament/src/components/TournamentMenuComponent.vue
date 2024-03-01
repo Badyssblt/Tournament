@@ -53,7 +53,7 @@ export default {
         const data = props.data;
         const teamLength = data.Team.length;
         const activeContent = ref('general');
-
+        console.log(data);
         const showMenu = (content) => {
             activeContent.value = content;
         }

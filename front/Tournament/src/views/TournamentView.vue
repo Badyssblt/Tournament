@@ -24,6 +24,8 @@ import axios from "axios";
 import _const from '@/const';
 import { useRoute } from 'vue-router';
 import TournamentMenuComponent from '../components/TournamentMenuComponent.vue';
+import router from '@/router';
+import { jwtDecode } from 'jwt-decode';
 
 
 export default {
@@ -35,6 +37,8 @@ export default {
         const data = ref({});
         const id = ref();
         const loaded = ref(false);
+        const token = localStorage.getItem('token');
+        const decoded = token ? jwtDecode(token) : '';
         onMounted(async () => {
             id.value = route.params.id;
             await getData();
@@ -47,7 +51,9 @@ export default {
                         'Content-Type': _const.content,
                     }
                 });
-
+                if(!res.data.visibility && res.data.CreatorTournament['email'] !== decoded.email){
+                    router.push('/');
+                }
                 data.value = res.data;
                 loaded.value = true;
             } catch (error) {

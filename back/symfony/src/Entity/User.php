@@ -87,6 +87,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'CreatorTournament', targetEntity: Tournament::class)]
     private Collection $tournaments;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['read:Tournament'])]
+    private ?string $name = null;
+
 
     public function __construct()
     {
@@ -275,6 +279,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->tournaments->removeElement($tournament)) {
             // set the owning side to null (unless already changed)
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

@@ -93,7 +93,7 @@ export default {
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
         width: 600px;
         background: var(--form-color);
         padding: 20px;
@@ -127,6 +127,7 @@ export default {
         outline: none;
         border-radius: 20px;
         font-family: var(--font-family);
+        margin-top: 5px;
     }
 
     .connexion {
