@@ -19,7 +19,7 @@
     </div>
     <div class="dashboard-content">
         <div class="dashboard-content__item" v-if="activeContent == 'teams'" :key="team">
-            <my-teams-component :team="team"/>
+            <my-teams-component :team="team" :isAdmin="isAdmin"/>
             
         </div>
         <div class="dashboard-content__item" v-if="activeContent == 'tournaments'">
@@ -42,6 +42,7 @@ import AsideRightDashboard from './AsideRightDashboard.vue';
 import { useRouter } from 'vue-router';
 import MyTournamentComponent from './Tournament/MyTournamentComponent.vue';
 import MyTeamsComponent from './Teams/MyTeamsComponent.vue';
+import { jwtDecode } from 'jwt-decode';
 
 export default {
   components: { AsideRightDashboard, MyTournamentComponent, MyTeamsComponent },
@@ -54,6 +55,8 @@ export default {
         const name = ref('');
         const router = useRouter();
         const tournaments = ref([]);
+        const decoded = token ? jwtDecode(token): '';
+        const isAdmin = ref(false);
 
 
         const showMenu = (content) => {
@@ -130,6 +133,11 @@ export default {
         onMounted(async () => {
             await getTeam();
             await getTournament();
+            if(decoded.email === team.value[0].Creator.email){
+                isAdmin.value = true;
+            }else {
+                isAdmin.value = false;
+            }
         })
 
         
@@ -142,7 +150,8 @@ export default {
             createTeam,
             name,
             logout,
-            tournaments
+            tournaments,
+            isAdmin
         }
     }
 }

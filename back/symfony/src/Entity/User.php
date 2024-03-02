@@ -62,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:team:item', 'read:Tournament'])]
+    #[Groups(['read:Tournament', 'read:team:item'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -88,7 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tournaments;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:Tournament'])]
+    #[Groups(['read:Tournament','read:team:item'])]
     private ?string $name = null;
 
 

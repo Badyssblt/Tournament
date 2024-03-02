@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\AddTeamToTournamentController;
 use App\Controller\GetCollectionTournamentController;
 use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
@@ -47,6 +48,11 @@ use App\Validator\Constraints\TeamsCount;
 #[Post()]
 #[Delete()]
 #[Patch()]
+#[Patch(
+    read: false,
+    controller: AddTeamToTournamentController::class,
+    uriTemplate: '/tournaments/{id}/addTeam'
+)]
 #[Patch(
     controller: LaunchTournamentController::class,
     read: false,

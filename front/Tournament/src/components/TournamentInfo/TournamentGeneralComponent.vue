@@ -14,22 +14,69 @@
             <p>{{ data.CreatorTournament['name'] }}</p>
         </div>
     </div>
-    <button>S'inscrire</button>
+    <button @click="handleSubmit">S'inscrire</button>
+    <p><b>{{ message }}</b></p>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import _const from '@/const.js';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 export default {
     name: 'TournamentGeneralComponent',
     props: {
-        data: Object,
-        required: true
+        data: {
+            type: Object,
+            required: true
+        }
     },
     setup(props){
-        const data = props.data;
-
+        const data = ref(props.data);
+        const teams = ref(data.value.Team);
+        const id = ref(0);
+        const route = useRoute();
+        const token = localStorage.getItem('token');
+        const message = ref('');
+        const isSuccess = ref(false);
+        onMounted(() => {
+            id.value = route.params.id;
+        })
+        const handleSubmit = async () => {
+            try {
+                const teamRes = await axios.get(_const.axios + '/team/myteam', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.content
+                    }
+                });
+                const res = await axios.patch(_const.axios + '/tournaments/' + id.value + '/addTeam', {
+                    Team: [
+                        '/api/teams/' + teamRes.data[0].id
+                    ]
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.patchContent
+                    }
+                });
+                if(res.data['@id']){
+                    isSuccess.value = true;
+                    message.value = "Vous vous êtes inscrit au tournoi";
+                }
+            } catch (error) {
+                if(error.response.status === 403){
+                    isSuccess.value = true;
+                    message.value = error.response.data.message;
+                }
+            }
+        }
         return {
-            data
+            data,
+            handleSubmit,
+            message,
+            isSuccess
         }
     }
 }

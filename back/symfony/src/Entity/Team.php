@@ -81,8 +81,8 @@ class Team
 
     #[ORM\ManyToOne(inversedBy: 'Creator')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:team:item'])]
     public ?User $Creator = null;
-
 
     #[ORM\ManyToMany(targetEntity: Matche::class, mappedBy: 'Team')]
     private Collection $matches;
@@ -95,6 +95,7 @@ class Team
     private Collection $winnerTournament;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:team:item'])]
     private ?float $Score = null;
 
     #[ORM\OneToMany(mappedBy: 'WinnerMatche', targetEntity: Matche::class)]

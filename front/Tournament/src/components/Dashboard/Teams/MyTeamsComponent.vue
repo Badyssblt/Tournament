@@ -10,7 +10,7 @@
                 <p class="message">{{ message }}</p>
             </form>
             </div>
-            <div class="my-team" v-else>
+            <div class="my-team" v-else v-if="isAdmin">
                 <p class="my-team__title">Mon équipe</p>
                 <div class="my-team__add-player">
                     <form @submit.prevent="findUser" class="form">
@@ -45,6 +45,10 @@ export default {
         team: {
             type: Object,
             required: true
+        },
+        isAdmin: {
+            type: Boolean,
+            required: true
         }
     },
     setup(props){
@@ -52,6 +56,7 @@ export default {
         const userResult = ref('');
         const searchEmail = ref('');
         const token = localStorage.getItem('token');
+        const isAdmin = ref(props.isAdmin);
         const sendInvite = async () => {
             try {
                 const res = await axios({
@@ -97,7 +102,8 @@ export default {
             findUser,
             searchEmail,
             userResult,
-            sendInvite
+            sendInvite,
+            isAdmin
         }
     }
 }

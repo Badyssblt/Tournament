@@ -136,7 +136,6 @@ export default {
         }
         const addTeams = async (teamId, item) => {
             if(teams.value[0] && teams.value[0]["@id"]){
-                console.log(teams.value);
                 const teamIds = teams.value.map(team => team['@id']);
                 const formattedTeamData = ref([]);
                 teams.value.forEach(team => {

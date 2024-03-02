@@ -46,7 +46,7 @@ export default {
         position: absolute;
         right: 0;
         top: 35px;
-        background: #1A0B0B;
+        background: var(--form-color);
         width: 300px;
         padding: 20px;
         border-radius: 20px 0px 20px 20px;
@@ -60,7 +60,7 @@ export default {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        color: black;
+        color: var(--background-color);
         margin-top: 20px;
     }
 
@@ -70,7 +70,7 @@ export default {
         align-items: center;
         gap: 20px;
         background: var(--primary-color);
-        border-radius: 10px;
-        padding: 10px 15px;
+        border-radius: 20px;
+        padding: 5px 15px;
     }
 </style>
