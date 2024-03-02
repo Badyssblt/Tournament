@@ -2,7 +2,8 @@
 
 namespace App\Entity;
 
-
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -58,6 +59,7 @@ use App\Validator\Constraints\TeamsCount;
         "summary" => "Génère les matchs du prochain round.",
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['game' => 'exact'])]
 class Tournament
 {
     #[ORM\Id]
@@ -69,10 +71,6 @@ class Tournament
     #[ORM\Column(length: 255)]
     #[Groups(['read:collection', 'read:Tournament'])]
     private ?string $name = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:collection', 'read:Tournament'])]
-    private ?string $game = null;
 
     #[ORM\Column()]
     #[Groups(['read:collection', 'read:Tournament'])]
@@ -93,6 +91,7 @@ class Tournament
     private ?User $CreatorTournament = null;
 
     #[ORM\ManyToOne(inversedBy: 'winnerTournament')]
+    #[Groups(['read:Tournament'])]
     private ?Team $winnerTournament = null;
 
     #[ORM\Column(length: 1000)]
@@ -107,10 +106,14 @@ class Tournament
     #[Groups(['read:collection', 'read:Tournament'])]
     private ?bool $visibility = null;
 
+    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'tournaments')]
+    private Collection $game;
+
     public function __construct()
     {
         $this->matche = new ArrayCollection();
         $this->Team = new ArrayCollection();
+        $this->game = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,17 +133,6 @@ class Tournament
         return $this;
     }
 
-    public function getGame(): ?string
-    {
-        return $this->game;
-    }
-
-    public function setGame(string $game): static
-    {
-        $this->game = $game;
-
-        return $this;
-    }
 
     public function getLaunched()
     {
@@ -263,6 +255,30 @@ class Tournament
     public function setVisibility(bool $visibility): static
     {
         $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGame(): Collection
+    {
+        return $this->game;
+    }
+
+    public function addGame(Game $game): static
+    {
+        if (!$this->game->contains($game)) {
+            $this->game->add($game);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        $this->game->removeElement($game);
 
         return $this;
     }

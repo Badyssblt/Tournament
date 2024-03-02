@@ -115,7 +115,7 @@ export default {
     .tournament-container {
         grid-row: 2;
         grid-column: 2 / 12;
-        margin-top: 90px;
+        margin-top: 140px;
     }
 
     .admin-container {

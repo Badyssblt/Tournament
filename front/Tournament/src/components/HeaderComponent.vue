@@ -5,7 +5,6 @@
             <router-link to="/">Tournament</router-link>
         </div>
         <div class="nav-content">
-            <li><a href="#">Evènement</a></li>
             <router-link to="/login" id="connect" v-if="!isLog">Se connecter</router-link>
             <div class="account" v-else>
                 <router-link to="/dashboard" id="connect" >Dashboard</router-link>

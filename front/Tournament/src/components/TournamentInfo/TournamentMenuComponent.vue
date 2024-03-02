@@ -13,10 +13,10 @@
     </div>
     <div class="tournament-menu__content">
         <div class="tournament-menu__content-item" v-show="activeContent === 'general'">
-            <p>Contenu de la catégorie général</p>
+            <TournamentGeneralComponent :data="data"/>
         </div>
         <div class="tournament-menu__content-item" v-show="activeContent === 'lead'">
-            <p>Contenu de la catégorie Leaderboard</p>
+            <TournamentLeaderboardComponent :data="data"/>
         </div>
         <div class="tournament-menu__content-item" v-show="activeContent === 'teams'">
             <p class="tournament-menu__title">Équipes</p>
@@ -41,6 +41,8 @@
 
 <script>
 import { ref } from 'vue'
+import TournamentGeneralComponent from './TournamentGeneralComponent.vue';
+import TournamentLeaderboardComponent from './TournamentLeaderboardComponent.vue';
 export default {
     name: "TournamentMenuComponent",
     props: {
@@ -49,26 +51,34 @@ export default {
             type: Object
         }
     },
-    setup(props){
+    setup(props) {
         const data = props.data;
         const teamLength = data.Team.length;
         const activeContent = ref('general');
         console.log(data);
         const showMenu = (content) => {
             activeContent.value = content;
-        }
-
+        };
         return {
             activeContent,
             showMenu,
             data,
             teamLength
-        }
-    }
+        };
+    },
+    components: { TournamentGeneralComponent, TournamentLeaderboardComponent }
 }
 </script>
 
 <style scoped>
+
+    .tournament-menu__container {
+        margin-top: 30px;
+    }
+
+    button {
+        cursor: pointer;
+    }
 
     .tournament-menu__top-item button.active::after {
         content: ""; 

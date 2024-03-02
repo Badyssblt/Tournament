@@ -1,5 +1,6 @@
 <template>
     <div class="tournamentRow-container">
+        <p>{{ category }}</p>
         <template v-for="(tournamentData, index) in data" :key="index">
             <tournament-card-component :datas="tournamentData"/>
         </template>
@@ -8,14 +9,21 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import TournamentCardComponent from './TournamentCardComponent.vue'
 import axios from 'axios';
 export default {
   components: { TournamentCardComponent },
     name: "TournamentRow",
-    setup(){
+    props: {
+        category: {
+            type: String,
+            required: true
+        }
+    },
+    setup(props){
         const data = ref([]);
+        const category = ref(props.category);
         const getData = async () => {
             try {
                 const res = await axios.get('http://localhost:8080/api/tournaments',
@@ -32,11 +40,13 @@ export default {
            
 
         }
-
-        getData();
+        onMounted(async () => {
+            await getData();
+        })
 
         return {
-            data
+            data,
+            category
         }
     }
 }

@@ -53,6 +53,7 @@ export default {
         padding: 20px;
         border-radius: 20px;
         background: var(--form-color);
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     }
     .team-info__wrapper {
         display: flex;

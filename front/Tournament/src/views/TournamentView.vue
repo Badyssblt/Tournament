@@ -7,7 +7,7 @@
                 </div>
                 <div class="tournament-info">
                     <p id="tournament-title">{{ data.name }}</p>
-                    <router-link :to="'/tournament/' + id + '/view'">Voir le tournoi</router-link>
+                    <router-link :to="'/tournament/' + id + '/view'" class="primary-button">Voir le tournoi</router-link>
                 </div>
                 
             </div>
@@ -23,7 +23,7 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import axios from "axios";
 import _const from '@/const';
 import { useRoute } from 'vue-router';
-import TournamentMenuComponent from '../components/TournamentMenuComponent.vue';
+import TournamentMenuComponent from '../components/TournamentInfo/TournamentMenuComponent.vue';
 import router from '@/router';
 import { jwtDecode } from 'jwt-decode';
 
@@ -109,5 +109,25 @@ export default {
         font-size: 2.8em;
         color: var(--text-color);
         text-transform: uppercase;
+    }
+
+    .primary-button {
+        width: fit-content;
+        background: var(--primary-color);
+        color: var(--background-color);
+        font-family: var(--font-family);
+        font-weight: bold;
+        border: 2px solid transparent;
+        outline: none;
+        padding: 5px 15px;
+        border-radius: 20px;
+        transition: all .3s ease;
+        cursor: pointer;
+    }
+
+    .primary-button:hover {
+        border: 2px solid var(--primary-color);
+        background: none;
+        color: var(--primary-color);
     }
 </style>

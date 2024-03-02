@@ -8,7 +8,7 @@
         <router-link to="/register" class="secondary-button">S'inscrire</router-link>
       </div>
     </div>
-    <TournamentRow/>
+    <TournamentRow category="Fortnite"/>
 </template>
 
 <script>
