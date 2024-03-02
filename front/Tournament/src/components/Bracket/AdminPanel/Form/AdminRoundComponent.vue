@@ -62,14 +62,20 @@ export default {
                         'Content-Type': _const.patchContent
                     }                
                 });
-                if(res.data){
+                if(res.data.message){
                     isSuccessRound.value = true;
-                    console.log(round.value + 1);
+                    message.value = 'Le gagnant a été défini';
+                }
+                if(res.data.matche){
+                    isSuccessRound.value = true;
                     message.value = 'Les matchs du round ' + (round.value + 1) + ' ont été générés';
                 };
                 context.emit('reloadTeams');
             } catch (error) {
-                console.error(error);
+                if(error.response.status === 401){
+                    isSuccessRound.value = true;
+                    message.value = error.response.data.message;
+                }
             }
         }
 
