@@ -15,6 +15,7 @@ use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
 use App\Controller\NextRoundController;
 use App\Controller\RetrieveTournamentController;
+use App\Controller\SearchTournamentController;
 use App\Repository\TournamentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -59,7 +60,25 @@ use App\Validator\Constraints\TeamsCount;
         "summary" => "Génère les matchs du prochain round.",
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['game' => 'exact'])]
+#[GetCollection(
+    controller: SearchTournamentController::class,
+    read: false,
+    openapiContext: [
+        'parameters' => [
+            [
+                'name' => 'category',
+                'in' => 'path',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string',
+                    'example' => 'Categorie',
+                    'description' => "Categorie recherché"
+                ]
+                ]
+                
+        ]
+    ]
+)]
 class Tournament
 {
     #[ORM\Id]
@@ -107,6 +126,7 @@ class Tournament
     private ?bool $visibility = null;
 
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'tournaments')]
+    #[Groups(['read:collection', 'read:Tournament'])]
     private Collection $game;
 
     public function __construct()

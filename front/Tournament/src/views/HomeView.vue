@@ -9,6 +9,8 @@
       </div>
     </div>
     <TournamentRow category="Fortnite"/>
+    <TournamentRow category="Rocket League"/>
+    <TournamentRow category="Valorant"/>
 </template>
 
 <script>

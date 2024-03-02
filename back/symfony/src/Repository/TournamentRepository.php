@@ -45,4 +45,20 @@ class TournamentRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+     * Récupère les tournois en fonction de la catégorie de jeu
+     * @param string $category Le nom de la catégorie de jeu
+     * @return Tournament[] Retourne un tableau d'objets Tournament
+     */
+    public function findByGameCategory($category): array
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.game', 'g')
+            ->andWhere('g.name = :category')
+            ->andWhere('t.visibility = true')
+            ->setParameter('category', $category)
+            ->getQuery()
+            ->getResult();
+    }
 }

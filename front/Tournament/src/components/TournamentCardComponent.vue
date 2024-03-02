@@ -38,7 +38,8 @@ export default {
         gap: 30px;
         padding: 30px 20px;
         border-radius: 10px;
-        background: var(--form-color);    
+        background: var(--form-color);   
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px; 
     }
     .card-info {
         display: flex;
