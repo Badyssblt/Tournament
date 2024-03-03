@@ -19,7 +19,7 @@
     </div>
     <div class="dashboard-content">
         <div class="dashboard-content__item" v-if="activeContent == 'teams'" :key="team">
-            <my-teams-component :team="team" :isAdmin="isAdmin"/>
+            <my-teams-component :team="team" @reloadTeam="reloadTeam"/>
             
         </div>
         <div class="dashboard-content__item" v-if="activeContent == 'tournaments'">
@@ -29,7 +29,7 @@
             <p>Le contenu de la catégorie mes inscriptions</p>
         </div>
     </div>
-    <aside-right-dashboard v-if="team && Object.keys(team).length > 0" :data="team"  />
+    <aside-right-dashboard v-if="team && Object.keys(team).length > 0" :data="team"  :key="team"/>
     
   </div>
 </template>
@@ -55,7 +55,6 @@ export default {
         const name = ref('');
         const router = useRouter();
         const tournaments = ref([]);
-        const decoded = token ? jwtDecode(token): '';
         const isAdmin = ref(false);
 
 
@@ -122,22 +121,21 @@ export default {
         const createTournament = async () => {
             
         }
+
+        const reloadTeam = async () => {
+            await getTeam();
+        }
         const logout = () => {
             if(token){
                 localStorage.setItem('token', '');
                 router.push('/');
-                console.log('deconnecter');
             }
         }
 
         onMounted(async () => {
             await getTeam();
             await getTournament();
-            if(decoded.email === team.value[0].Creator.email){
-                isAdmin.value = true;
-            }else {
-                isAdmin.value = false;
-            }
+            
         })
 
         
@@ -151,7 +149,8 @@ export default {
             name,
             logout,
             tournaments,
-            isAdmin
+            isAdmin,
+            reloadTeam
         }
     }
 }

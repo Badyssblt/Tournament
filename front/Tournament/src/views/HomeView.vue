@@ -11,16 +11,20 @@
     <TournamentRow category="Fortnite"/>
     <TournamentRow category="Rocket League"/>
     <TournamentRow category="Valorant"/>
+    
+    <footer-component/>
 </template>
 
 <script>
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import TournamentRow from '@/components/TournamentRow.vue';
+import FooterComponent from '../components/FooterComponent.vue';
 export default {
   name: 'Home',
   components: {
     HeaderComponent,
-    TournamentRow
+    TournamentRow,
+    FooterComponent
   },
   setup(){
     

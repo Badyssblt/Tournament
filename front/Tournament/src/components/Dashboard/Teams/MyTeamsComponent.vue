@@ -1,6 +1,6 @@
 <template>
-  <div class="create-team" v-if="!team" :key="team">
-                <form @submit.prevent="createTeam" class="form">
+  <div class="create-team" v-if="team[0] == null" :key="team">
+            <form @submit.prevent="createTeam" class="form">
                 <p class="title">Créer une équipe</p>
                 <div class="form-input">
                     <label for="name">Entrer le nom de l'équipe</label>
@@ -9,8 +9,8 @@
                 <button type="submit" class="submit">Créer une équipe</button>
                 <p class="message">{{ message }}</p>
             </form>
-            </div>
-            <div class="my-team" v-else v-if="isAdmin">
+    </div>
+            <div class="my-team" v-else v-if="isAdmin" :key="team">
                 <p class="my-team__title">Mon équipe</p>
                 <div class="my-team__add-player">
                     <form @submit.prevent="findUser" class="form">
@@ -36,27 +36,35 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import _const from '@/const.js'
+import { jwtDecode } from 'jwt-decode';
 export default {
     name: 'MyTeamsComponents',
     props: {
         team: {
             type: Object,
             required: true
-        },
-        isAdmin: {
-            type: Boolean,
-            required: true
         }
     },
-    setup(props){
+    setup(props, context){
         const team = ref(props.team);
         const userResult = ref('');
         const searchEmail = ref('');
         const token = localStorage.getItem('token');
-        const isAdmin = ref(props.isAdmin);
+        const isAdmin = ref(false);
+        const name = ref('');
+        const isSuccess = ref(false);
+        const message = ref('');
+        const decoded = token ? jwtDecode(token): '';
+        onMounted(() => {
+            if(team.value[0] && decoded.email === team.value[0].Creator.email){
+                isAdmin.value = true;
+            }else {
+                isAdmin.value = false;
+            }
+        })
         const sendInvite = async () => {
             try {
                 const res = await axios({
@@ -73,7 +81,8 @@ export default {
                     }
                 });
                 if(res.data.id){
-                    findUserMessage.value = "Invitation envoyé"
+                    findUserMessage.value = "Invitation envoyé";
+                    
                 }
             } catch (error) {
                 
@@ -92,6 +101,28 @@ export default {
                 });
 
                 userResult.value = res.data;
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        const createTeam = async () => {
+            try {
+                const res = await axios.post(_const.axios + '/teams', {
+                    name: name.value
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.content
+                    }
+                });
+                if(res.data.name){
+                    isSuccess.value = true;
+                    message.value = "L'équipe a été crée";
+                    team.value = res.data;
+                    context.emit('reloadTeam');
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -103,7 +134,11 @@ export default {
             searchEmail,
             userResult,
             sendInvite,
-            isAdmin
+            isAdmin,
+            name,
+            createTeam,
+            isSuccess,
+            message
         }
     }
 }
@@ -172,7 +207,6 @@ export default {
     }
 
     form button{
-        color: var(--text-color);
         font-family: var(--font-family);
         width: fit-content;
         border: none;
@@ -212,13 +246,20 @@ export default {
 
     .submit {
         background: var(--secondary-color);
-        color: var(--text-color);
+        color: var(--background-color);
         outline: none;
         padding: 5px 10px;
         outline: none;
-        border: none;
+        border: 2px solid transparent;
         border-radius: 20px;
         font-family: var(--font-family);
         cursor: pointer;
+        transition: all .2s ease;
+    }
+
+    .submit:hover {
+        background: none;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
     }
 </style>

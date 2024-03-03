@@ -1,7 +1,7 @@
 <template>
   <aside>
     <div class="team-info__container">
-        <div class="team-info__wrapper">
+        <div class="team-info__wrapper" v-if="team[0]">
             <div class="team-info__item">
                 <p>Nom de l'équipe</p>
                 <p><b>{{ team[0].name }}</b></p>

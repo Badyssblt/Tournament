@@ -3,8 +3,12 @@
     <form @submit.prevent="handleSubmit">
         <h2 class="title">S'inscrire</h2>
         <div class="form-input">
+            <label for="name">Nom</label>
+            <input type="text" name="name" id="name" autocomplete="off" class="full" v-model="name">
+        </div>
+        <div class="form-input">
             <label for="email">Adresse email</label>
-            <input type="email" name="email" id="email" autocomplete="off" placeholder="user@example.com" class="full" v-model="email">
+            <input type="email" name="email" id="email" autocomplete="off" placeholder="JohnDoe@exemple.com" class="full" v-model="email">
         </div>
         <div class="form-row">
             <div class="form-input">
@@ -37,6 +41,7 @@ export default {
         const confirmPassword = ref('');
         const message = ref('');
         const isSuccess = ref(false);
+        const name = ref('');
         const handleSubmit = async () => {
             if(password.value !== confirmPassword.value){
                 isSuccess.value = true;
@@ -45,7 +50,8 @@ export default {
                 try {
                 const res = await axios.post(_const.axios + '/users', {
                     email: email.value,
-                    password: password.value
+                    password: password.value,
+                    name: name.value
                 }, {
                     headers: {
                         'Content-Type': _const.content
@@ -75,7 +81,8 @@ export default {
             confirmPassword,
             message,
             isSuccess,
-            handleSubmit
+            handleSubmit,
+            name
         }
     }
 }
