@@ -118,9 +118,6 @@ export default {
             }
         }
 
-        const createTournament = async () => {
-            
-        }
 
         const reloadTeam = async () => {
             await getTeam();

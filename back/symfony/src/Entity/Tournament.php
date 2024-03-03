@@ -45,7 +45,9 @@ use App\Validator\Constraints\TeamsCount;
     read: false,
     controller: GetTournamentMatcheController::class
 )]
-#[Post()]
+#[Post(
+    security: "is_granted('ROLE_CREATOR')"
+)]
 #[Delete()]
 #[Patch()]
 #[Patch(
