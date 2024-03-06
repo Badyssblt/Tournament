@@ -20,15 +20,18 @@
     <div class="dashboard-content">
         <div class="dashboard-content__item" v-if="activeContent == 'teams'" :key="team">
             <my-teams-component :team="team" @reloadTeam="reloadTeam"/>
+            <my-teams-component :team="team" @reloadTeam="reloadTeam"/>
             
         </div>
         <div class="dashboard-content__item" v-if="activeContent == 'tournaments'">
+            <my-tournament-component :data="tournaments"/>
             <my-tournament-component :data="tournaments"/>
         </div>
         <div class="dashboard-content__item" v-if="activeContent == 'signup'">
             <registration-component :team="team"/>
         </div>
     </div>
+    <aside-right-dashboard v-if="team && Object.keys(team).length > 0" :data="team"  :key="team"/>
     <aside-right-dashboard v-if="team && Object.keys(team).length > 0" :data="team"  :key="team"/>
     
   </div>
@@ -58,10 +61,14 @@ export default {
         const tournaments = ref([]);
         const isAdmin = ref(false);
 
+        const tournaments = ref([]);
+        const isAdmin = ref(false);
+
 
         const showMenu = (content) => {
             activeContent.value = content;
         }
+
 
 
         const getTeam = async () => {
@@ -80,18 +87,26 @@ export default {
         }
 
         const getTournament = async () => {
+        const getTournament = async () => {
             try {
                 const res = await axios.get(_const.axios + '/tournament/myTournament', {
+                const res = await axios.get(_const.axios + '/tournament/myTournament', {
                     headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': _const.content
                         'Authorization': 'Bearer ' + token,
                         'Content-Type': _const.content
                     }
                 });
                 tournaments.value = res.data['hydra:member'];
+                tournaments.value = res.data['hydra:member'];
             } catch (error) {
+                
                 
             }
         }
+
+        
 
         
 
@@ -123,6 +138,11 @@ export default {
         const reloadTeam = async () => {
             await getTeam();
         }
+
+
+        const reloadTeam = async () => {
+            await getTeam();
+        }
         const logout = () => {
             if(token){
                 localStorage.setItem('token', '');
@@ -132,6 +152,8 @@ export default {
 
         onMounted(async () => {
             await getTeam();
+            await getTournament();
+            
             await getTournament();
             
         })
@@ -149,6 +171,10 @@ export default {
             tournaments,
             isAdmin,
             reloadTeam
+            logout,
+            tournaments,
+            isAdmin,
+            reloadTeam
         }
     }
 }
@@ -159,6 +185,10 @@ export default {
         display: flex;
         flex-direction: row;
         gap: 30px;
+    }
+
+    .dashboard-content {
+        width: 80%;
     }
 
     .dashboard-content {
@@ -189,7 +219,9 @@ export default {
     .dashboard-menu__item button {
         background: var(--secondary-color);
         color: var(--background-color);
+        color: var(--background-color);
         font-family: var(--font-family);
+        border: 2px solid transparent;
         border: 2px solid transparent;
         outline: none;
         padding: 5px 10px;
@@ -200,7 +232,14 @@ export default {
         transition: all .2s ease;
         cursor: pointer;
     }
+        transition: all .2s ease;
+        cursor: pointer;
+    }
 
+    .dashboard-menu__item button:hover {
+        background: none;
+        color: var(--secondary-color);
+        border: 2px solid var(--primary-color);
     .dashboard-menu__item button:hover {
         background: none;
         color: var(--secondary-color);
@@ -210,6 +249,22 @@ export default {
         font-weight: bold;
         color: var(--secondary-color);
         font-size: 1.3em;
+    }
+
+    .primary-button {
+        background: var(--primary-color);
+        color: var(--background-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        border: 2px solid transparent;
+        transition: all .2s ease;
+        width: fit-content;
+    }
+
+    .primary-button:hover {
+        background: none;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
     }
 
     .primary-button {
@@ -272,6 +327,11 @@ export default {
         font-family: var(--font-family);
         cursor: pointer;
     }
+
+    
+
+
+
 
     
 

@@ -15,6 +15,8 @@
         <div class="footer-col__content">
             <ul>
                 <router-link class="footer-item" to="/faq/creator">Comment devenir <b>Créateur</b></router-link>
+
+                <li class="footer-item">Comment devenir <b>Créateur</b></li>
                 <li class="footer-item">Comment créer un tournoi</li>
             </ul>
         </div>

@@ -51,8 +51,7 @@ export default {
                 const res = await axios.post(_const.axios + '/users', {
                     email: email.value,
                     password: password.value,
-                    name: name.value,
-                    is_verified: false
+                    name: name.value
                 }, {
                     headers: {
                         'Content-Type': _const.content
@@ -61,7 +60,7 @@ export default {
                 if(res.data){
                     isSuccess.value = true;
                     message.value = 'Inscription réussie';
-                    router.push('/verify/' + res.data.id);
+                    router.push('/login');
                 }
 
 

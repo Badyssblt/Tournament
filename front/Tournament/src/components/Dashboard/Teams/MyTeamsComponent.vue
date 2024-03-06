@@ -58,7 +58,6 @@ export default {
         const isSuccess = ref(false);
         const message = ref('');
         const decoded = token ? jwtDecode(token): '';
-        const findUserMessage = ref('');
         onMounted(() => {
             if(team.value[0] && decoded.email === team.value[0].Creator.email){
                 isAdmin.value = true;
@@ -77,7 +76,7 @@ export default {
                     },
                     data: {
                         requestingUser: "/api/users/" + userResult.value.id,
-                        targetTeam: "/api/teams/" + team.value[0].id,
+                        targetTeam: "/api/teams/" + team.value.id,
                         status: "pending"
                     }
                 });
@@ -139,9 +138,8 @@ export default {
             name,
             createTeam,
             isSuccess,
-            message,
-            findUserMessage
-    }
+            message
+        }
     }
 }
 </script>

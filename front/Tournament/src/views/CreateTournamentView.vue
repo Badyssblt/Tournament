@@ -49,6 +49,7 @@ export default {
     const isSuccess = ref(false);
     const message = ref('');
     const decoded = jwtDecode(token);
+
     const getGames = async () => {
       try {
         const res = await axios.get(_const.axios + '/games', {
@@ -75,6 +76,7 @@ export default {
           maxTeams: maxTeams.value,
           CreatorTournament: '/api/users/' + decoded.id,
           description: description.value
+          maxTeams: maxTeams.value
         }, {
           headers: {
             'Authorization': 'Bearer ' + token,

@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -12,9 +14,13 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\AddTeamToTournamentController;
 use App\Controller\GetCollectionTournamentController;
+use App\Controller\AddTeamToTournamentController;
+use App\Controller\GetCollectionTournamentController;
 use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
 use App\Controller\NextRoundController;
+use App\Controller\RetrieveTournamentController;
+use App\Controller\SearchTournamentController;
 use App\Controller\RetrieveTournamentController;
 use App\Controller\SearchTournamentController;
 use App\Repository\TournamentRepository;
@@ -39,7 +45,16 @@ use App\Validator\Constraints\TeamsCount;
     uriTemplate: "/tournament/myTournament",
     controller: RetrieveTournamentController::class,
     read: false
+    normalizationContext: ['groups' => ['read:collection']],
+    controller: GetCollectionTournamentController::class,
+    read: false
 )]
+#[GetCollection(
+    uriTemplate: "/tournament/myTournament",
+    controller: RetrieveTournamentController::class,
+    read: false
+)]
+
 
 #[GetCollection(
     uriTemplate: "tournaments/{id}/getMatch",
@@ -49,8 +64,16 @@ use App\Validator\Constraints\TeamsCount;
 #[Post(
     security: "is_granted('ROLE_CREATOR')"
 )]
+#[Post(
+    security: "is_granted('ROLE_CREATOR')"
+)]
 #[Delete()]
 #[Patch()]
+#[Patch(
+    read: false,
+    controller: AddTeamToTournamentController::class,
+    uriTemplate: '/tournaments/{id}/addTeam'
+)]
 #[Patch(
     read: false,
     controller: AddTeamToTournamentController::class,
@@ -120,6 +143,7 @@ class Tournament
 
     #[ORM\ManyToOne(inversedBy: 'winnerTournament')]
     #[Groups(['read:Tournament'])]
+    #[Groups(['read:Tournament'])]
     private ?Team $winnerTournament = null;
 
     #[ORM\Column(length: 1000)]
@@ -145,6 +169,7 @@ class Tournament
     {
         $this->matche = new ArrayCollection();
         $this->Team = new ArrayCollection();
+        $this->game = new ArrayCollection();
         $this->game = new ArrayCollection();
     }
 

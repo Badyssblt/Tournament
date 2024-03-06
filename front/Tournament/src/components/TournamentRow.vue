@@ -31,6 +31,7 @@ export default {
         const getData = async () => {
             try {
                 const res = await axios.get(_const.axios + '/tournaments?category=' + category.value,
+                const res = await axios.get('http://localhost:8080/api/tournaments?category=' + category.value,
                     {
                         headers: {
                             "Content-Type": "application/ld+json"

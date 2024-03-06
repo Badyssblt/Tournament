@@ -5,8 +5,7 @@
       <p class="main-description">Découvrez notre plateforme de tournois de jeux vidéo, où vous pouvez créer ou rejoindre des compétitions en ligne. Affrontez d'autres joueurs, montrez vos compétences et vivez l'adrénaline du gaming compétitif avec nous.</p>
       <div class="main-button">
         <button class="primary-button">Découvrir</button>
-        <router-link to="/register" class="secondary-button" v-if="!isLog">S'inscrire</router-link>
-        <router-link to="/register" class="secondary-button" v-else>Dashboard</router-link>
+        <button class="secondary-button">S'inscrire</button>
       </div>
     </div>
     <TournamentRow category="Fortnite"/>
@@ -19,9 +18,6 @@
 <script>
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import TournamentRow from '@/components/TournamentRow.vue';
-import FooterComponent from '../components/FooterComponent.vue';
-import { ref } from "vue";
-import { jwtDecode } from 'jwt-decode';
 export default {
   name: 'Home',
   components: {
@@ -30,24 +26,8 @@ export default {
     FooterComponent
   },
   setup(){
-    const isLog = ref(false);
-    const token = localStorage.getItem('token');
-    if(token){
-                const decoded = jwtDecode(token);
-                const expirationDate = new Date(decoded.exp * 1000);
-                if(expirationDate < new Date()){
-                    isLog.value = false;
-                    localStorage.setItem('token', '');
-                }else {
-                    isLog.value = true;
-                }
-                
-            }
-    return {
-      isLog
-    }
-  },
-  title: 'Accueil'
+
+  }
 }
 </script>
 
