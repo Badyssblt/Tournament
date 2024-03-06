@@ -2,27 +2,52 @@
     <HeaderComponent/>
     <div class="main-container">
       <p id="main-title">Rejoignez ou créer des tournois et gagnez des récompenses.</p>
-      <p class="main-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum dolores doloribus perspiciatis earum atque excepturi neque, voluptas magni nesciunt dicta iste labore sapiente ipsam mollitia possimus est molestias adipisci minus.</p>
+      <p class="main-description">Découvrez notre plateforme de tournois de jeux vidéo, où vous pouvez créer ou rejoindre des compétitions en ligne. Affrontez d'autres joueurs, montrez vos compétences et vivez l'adrénaline du gaming compétitif avec nous.</p>
       <div class="main-button">
         <button class="primary-button">Découvrir</button>
-        <button class="secondary-button">S'inscrire</button>
+        <router-link to="/register" class="secondary-button" v-if="!isLog">S'inscrire</router-link>
+        <router-link to="/register" class="secondary-button" v-else>Dashboard</router-link>
       </div>
     </div>
-    <TournamentRow/>
+    <TournamentRow category="Fortnite"/>
+    <TournamentRow category="Rocket League"/>
+    <TournamentRow category="Valorant"/>
+    
+    <footer-component/>
 </template>
 
 <script>
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import TournamentRow from '@/components/TournamentRow.vue';
+import FooterComponent from '../components/FooterComponent.vue';
+import { ref } from "vue";
+import { jwtDecode } from 'jwt-decode';
 export default {
   name: 'Home',
   components: {
     HeaderComponent,
-    TournamentRow
-},
+    TournamentRow,
+    FooterComponent
+  },
   setup(){
-
-  }
+    const isLog = ref(false);
+    const token = localStorage.getItem('token');
+    if(token){
+                const decoded = jwtDecode(token);
+                const expirationDate = new Date(decoded.exp * 1000);
+                if(expirationDate < new Date()){
+                    isLog.value = false;
+                    localStorage.setItem('token', '');
+                }else {
+                    isLog.value = true;
+                }
+                
+            }
+    return {
+      isLog
+    }
+  },
+  title: 'Accueil'
 }
 </script>
 
@@ -69,13 +94,20 @@ export default {
   }
 
   .secondary-button {
-    padding: 5px 15px;
+    padding: 5px 20px;
     background: var(--secondary-color);
     border: 2px solid transparent;
-    color: var(--text-color);
+    color: var(--background-color);
     font-family: var(--font-family);
     outline: none;
     font-size: 1em;
     border-radius: 20px;
+    transition: all .2s ease;
+  }
+
+  .secondary-button:hover {
+    background: none;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
   }
 </style>

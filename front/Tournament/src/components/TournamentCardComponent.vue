@@ -6,18 +6,17 @@
     <div class="card-info">
         <p class="card-title">{{ data.name }}</p>
         <p class="card-secondary">Equipe maximum : <b>{{ data.maxTeams }}</b></p>
-        <router-link class="secondary-button" :to="'/tournament/' + data.id">Voir plus</router-link>
+        <router-link class="primary-button" :to="'/tournament/' + data.id">Voir plus</router-link>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 export default {
     name: "TournamentCard",
     props: {
         datas: {
-            type: Array,
+            type: Object,
             required: true
         }
     },  
@@ -30,7 +29,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .card-container {
         width: 300px;
         display: flex;
@@ -39,7 +38,8 @@ export default {
         gap: 30px;
         padding: 30px 20px;
         border-radius: 10px;
-        background: var(--form-color);    
+        background: var(--form-color);   
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px; 
     }
     .card-info {
         display: flex;
@@ -63,16 +63,26 @@ export default {
         border-radius: 10px;
     }
 
-    .secondary-button {
-        padding: 5px 15px;
-        background: var(--secondary-color);
-        border: 2px solid transparent;
+    .primary-button {
+        width: 100%;
+        text-align: center;
+        background: var(--primary-color);
         color: var(--background-color);
         font-family: var(--font-family);
+        font-weight: bold;
+        border: 2px solid transparent;
         outline: none;
-        font-size: 1em;
+        padding: 5px 15px;
+        font-size: 14px;
         border-radius: 20px;
-        justify-self: center;
+        transition: all .3s ease;
+        cursor: pointer;
+    }
+
+    .primary-button:hover {
+        border: 2px solid var(--primary-color);
+        background: none;
+        color: var(--primary-color);
     }
 
 </style>

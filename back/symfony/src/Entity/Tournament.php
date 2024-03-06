@@ -2,23 +2,27 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Controller\AddTeamToTournamentController;
+use App\Controller\GetCollectionTournamentController;
 use App\Controller\GetTournamentMatcheController;
 use App\Controller\LaunchTournamentController;
 use App\Controller\NextRoundController;
-use App\Dto\TeamUpdateDto;
+use App\Controller\RetrieveTournamentController;
+use App\Controller\SearchTournamentController;
 use App\Repository\TournamentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints\TeamsCount;
 
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
@@ -27,16 +31,31 @@ use App\Validator\Constraints\TeamsCount;
     normalizationContext: ['groups' => ['read:Tournament']]
 )]
 #[GetCollection(
-    normalizationContext: ['groups' => ['read:collection']]
+    normalizationContext: ['groups' => ['read:collection']],
+    controller: GetCollectionTournamentController::class,
+    read: false
 )]
+#[GetCollection(
+    uriTemplate: "/tournament/myTournament",
+    controller: RetrieveTournamentController::class,
+    read: false
+)]
+
 #[GetCollection(
     uriTemplate: "tournaments/{id}/getMatch",
     read: false,
     controller: GetTournamentMatcheController::class
 )]
-#[Post()]
+#[Post(
+    security: "is_granted('ROLE_CREATOR')"
+)]
 #[Delete()]
 #[Patch()]
+#[Patch(
+    read: false,
+    controller: AddTeamToTournamentController::class,
+    uriTemplate: '/tournaments/{id}/addTeam'
+)]
 #[Patch(
     controller: LaunchTournamentController::class,
     read: false,
@@ -50,21 +69,36 @@ use App\Validator\Constraints\TeamsCount;
         "summary" => "Génère les matchs du prochain round.",
     ]
 )]
+#[GetCollection(
+    controller: SearchTournamentController::class,
+    read: false,
+    openapiContext: [
+        'parameters' => [
+            [
+                'name' => 'category',
+                'in' => 'path',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string',
+                    'example' => 'Categorie',
+                    'description' => "Categorie recherché"
+                ]
+            ]
+
+        ]
+    ]
+)]
 class Tournament
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:collection', 'read:Tournament'])]
+    #[Groups(['read:collection', 'read:Tournament', 'read:team:item:register'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:collection', 'read:Tournament'])]
+    #[Groups(['read:collection', 'read:Tournament', 'read:team:item:register'])]
     private ?string $name = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:collection', 'read:Tournament'])]
-    private ?string $game = null;
 
     #[ORM\Column()]
     #[Groups(['read:collection', 'read:Tournament'])]
@@ -85,20 +119,33 @@ class Tournament
     private ?User $CreatorTournament = null;
 
     #[ORM\ManyToOne(inversedBy: 'winnerTournament')]
+    #[Groups(['read:Tournament'])]
     private ?Team $winnerTournament = null;
 
     #[ORM\Column(length: 1000)]
-    #[Groups(['read:collection', 'read:Tournament'])]
+    #[Groups(['read:collection', 'read:Tournament', 'read:team:item:register'])]
     private ?string $image = null;
 
     #[ORM\Column]
     #[Groups(['read:collection', 'read:Tournament'])]
     private ?int $maxTeams = null;
 
+    #[ORM\Column]
+    #[Groups(['read:collection', 'read:Tournament'])]
+    private ?bool $visibility = null;
+
+    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'tournaments')]
+    #[Groups(['read:collection', 'read:Tournament'])]
+    private Collection $game;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->matche = new ArrayCollection();
         $this->Team = new ArrayCollection();
+        $this->game = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -118,17 +165,6 @@ class Tournament
         return $this;
     }
 
-    public function getGame(): ?string
-    {
-        return $this->game;
-    }
-
-    public function setGame(string $game): static
-    {
-        $this->game = $game;
-
-        return $this;
-    }
 
     public function getLaunched()
     {
@@ -239,6 +275,54 @@ class Tournament
     public function setMaxTeams(int $maxTeams): static
     {
         $this->maxTeams = $maxTeams;
+
+        return $this;
+    }
+
+    public function isVisibility(): ?bool
+    {
+        return $this->visibility;
+    }
+
+    public function setVisibility(bool $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGame(): Collection
+    {
+        return $this->game;
+    }
+
+    public function addGame(Game $game): static
+    {
+        if (!$this->game->contains($game)) {
+            $this->game->add($game);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        $this->game->removeElement($game);
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

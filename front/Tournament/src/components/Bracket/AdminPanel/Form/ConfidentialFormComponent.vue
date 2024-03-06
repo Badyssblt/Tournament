@@ -4,12 +4,12 @@
         <form @submit.prevent="handleSubmit">
             <div class="form-input">
                 <label for="name">Nom du tournoi</label>
-                <input type="text" name="name" id="name" autocomplete="off" v-model="name">
+                <input type="text" name="name" id="name" autocomplete="off" v-model="name" required>
             </div>
             <div class="form-input">
                 <label for="visibility">Visibilité du tounoi</label>
                 <div class="form-radio">
-                    <input type="radio" name="visibility" id="public" v-model="visibility" value="public">
+                    <input type="radio" name="visibility" id="public" v-model="visibility" value="public"> 
                     <label for="public">Public</label>
                 </div>
                 <div class="form-radio">
@@ -19,11 +19,11 @@
             </div>
             <div class="form-input">
                 <label for="name">Image</label>
-                <input type="text" name="image" id="image" placeholder="Entrer un lien" autocomplete="off" v-model="imageLink">
+                <input type="text" name="image" id="image" placeholder="Entrer un lien" autocomplete="off" v-model="imageLink" required>
             </div>
             <div class="form-input">
                 <label for="number">Nombre d'équipe maximum</label>
-                <input type="number" name="max" id="max" v-model="maxTeams">
+                <input type="number" name="max" id="max" v-model="maxTeams" required>
             </div>
             <button type="submit">Modifier le tournoi</button>
             <p class="success-text" v-if="SuccessEdited">{{ message }}</p>
@@ -50,17 +50,22 @@ export default {
         const SuccessEdited = ref(false);
         const message = ref('');
 
-
         onMounted(() => {
             id.value = route.params.id;
         })
 
         const handleSubmit = async () => {
+            if(visibility.value == 'public'){
+                visibility.value = true;
+            }else {
+                visibility.value = false;
+            }
             try {
                 const res = await axios.patch(_const.axios + '/tournaments/' + id.value, {
                     name: name.value,
                     image: imageLink.value,
-                    maxTeams: maxTeams.value
+                    maxTeams: maxTeams.value,
+                    visibility: visibility.value
                 }, {
                     headers: {
                         'Authorization': 'Bearer ' + token,
@@ -72,7 +77,6 @@ export default {
                     message.value = 'Les informations ont bien été modifié';
                 }
             } catch (error) {
-                
             }
         }
 

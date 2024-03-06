@@ -37,8 +37,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
     uriTemplate: "/team/myteam",
     openapiContext: [
         "summary" => "Récupère l'équipe d'un utilisateur"
+    ]
+)]
+#[GetCollection(
+    uriTemplate: "/teams/{id}/match",
+    openapiContext: [
+        "summary" => "Récèpère les matchs d'une équipe"
     ],
-    normalizationContext: ['groups' => ['read:team:item']]
+    normalizationContext: ['groups' => ['read:team:item:register']]
 )]
 #[GetCollection()]
 #[Patch(
@@ -81,20 +87,22 @@ class Team
 
     #[ORM\ManyToOne(inversedBy: 'Creator')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read:team:item'])]
     public ?User $Creator = null;
-
 
     #[ORM\ManyToMany(targetEntity: Matche::class, mappedBy: 'Team')]
     private Collection $matches;
 
 
     #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'Team')]
+    #[Groups(['read:team:item:register'])]
     private Collection $tournaments;
 
     #[ORM\OneToMany(mappedBy: 'winnerTournament', targetEntity: Tournament::class)]
     private Collection $winnerTournament;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:team:item'])]
     private ?float $Score = null;
 
     #[ORM\OneToMany(mappedBy: 'WinnerMatche', targetEntity: Matche::class)]

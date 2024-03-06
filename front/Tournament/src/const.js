@@ -6,3 +6,12 @@ export default {
   host: "http://localhost:8080",
   patchContent: "application/merge-patch+json",
 };
+
+// export default {
+//   axios: "https://scoped.fr/back/api",
+//   host: "https://scoped.fr/back",
+//   login: "https://scoped.fr/back/auth",
+//   content: "application/ld+json",
+//   host: "https://scoped.fr/back",
+//   patchContent: "application/merge-patch+json",
+// };

@@ -8,10 +8,10 @@
                'round-' + roundNumber + '-' + (index + 1),
                'round-' + roundNumber,
                {'even': (index + 1) % 2 == 0 && roundNumber == 1, 'odd': (index + 1) % 2 !== 0 && roundNumber == 1},
-               {'last': index === matchesInRound.length - 1} // Ajoute la classe 'last' si c'est le dernier élément
+               {'last': index === matchesInRound.length - 1}  
              ]">
              <button @click="showWinnerForm(index, roundNumber)" class="edit" v-if="adminShowed">
-               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#3f51b5" d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
+               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#3f51b5" d="M362.7 19.3L314.3 67.7 444.3 197.7l48.4-48.4c25-25 25-65.5 0-90.5L453.3 19.3c-25-25-65.5-25-90.5 0zm-71 71L58.6 323.5c-10.4 10.4-18 23.3-22.2 37.4L1 481.2C-1.5 489.7 .8 498.8 7 505s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L421.7 220.3 291.7 90.3z"/></svg>
              </button>
              <div class="winner-form" v-if="isWinnerFormVisible(index, roundNumber)">
                 <set-winner-component :teams="match" @reloadTeams="handleReloadTeams"/>
@@ -105,7 +105,7 @@ export default {
 <style scoped>
 .bracket-container {
   display: grid;
-  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, 410px);
   grid-template-rows: repeat(16, 1fr);
   gap: 20px;
 }
@@ -246,46 +246,18 @@ export default {
   .odd::after {
     position: absolute;
     content: "";
-    width: 30%;
-    height: 2px;
-    right: -40px;
+    width: 30px;
+    right: -20px;
     top: 50%;
     bottom: 50%;
-    background: var(--primary-color);
+    border-top: 2px solid var(--primary-color);
+    border-right: 2px solid var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    height: 170px;
+    z-index: -1;
   }
 
-  .odd::before {
-    position: absolute;
-    content: "";
-    width: 50%;
-    height: 2px;
-    transform: rotate(90deg);
-    right: -50%;
-    bottom: -10px;
-    background: var(--primary-color);
-  }
 
-  .even::after {
-    position: absolute;
-    content: "";
-    width: 30%;
-    height: 2px;
-    right: -40px;
-    top: 50%;
-    bottom: 50%;
-    background: var(--primary-color);
-  }
-
-  .even::before {
-    position: absolute;
-    content: "";
-    width: 60%;
-    height: 2px;
-    transform: rotate(90deg);
-    right: -55%;
-    top: -15px;
-    background: var(--primary-color);
-  }
 
   .round-2 {
     position: relative;
@@ -294,9 +266,9 @@ export default {
   .round-2::before {
     position: absolute;
     content: "";
-    width: 145%;
+    width: 160%;
     height: 2px;
-    left: -143%;
+    left: -157%;
     top: 50%;
     bottom: 50%;
     background: var(--primary-color);

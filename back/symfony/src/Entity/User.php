@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Controller\FindUserByEmailController;
 use App\Controller\RegisterController;
+use App\Controller\VerifyAccountController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +23,11 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[Post(
     controller: RegisterController::class,
     read: false
+)]
+#[Patch(
+    controller: VerifyAccountController::class,
+    uriTemplate: '/users/{id}/verify/{code}',
+    read: false,
 )]
 #[Get()]
 #[Get(
@@ -52,6 +59,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ]
     ]
 )]
+
 #[UniqueEntity(fields: "email", message: "Un utilisateur avec cet adresse email existe déjà.")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -62,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['read:team:item', 'read:Tournament'])]
+    #[Groups(['read:Tournament', 'read:team:item'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -86,6 +94,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'CreatorTournament', targetEntity: Tournament::class)]
     private Collection $tournaments;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['read:Tournament', 'read:team:item'])]
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?int $verification_code = null;
+
+    #[ORM\Column]
+    private ?bool $is_verified = null;
 
 
     public function __construct()
@@ -275,6 +293,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->tournaments->removeElement($tournament)) {
             // set the owning side to null (unless already changed)
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getVerificationCode(): ?int
+    {
+        return $this->verification_code;
+    }
+
+    public function setVerificationCode(int $verification_code): static
+    {
+        $this->verification_code = $verification_code;
+
+        return $this;
+    }
+
+    public function getIsVerified(): ?bool
+    {
+        return $this->is_verified;
+    }
+
+    public function setisVerified(bool $is_verified): static
+    {
+        $this->is_verified = $is_verified;
 
         return $this;
     }

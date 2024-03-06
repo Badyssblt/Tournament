@@ -49,7 +49,7 @@ export default {
 
 <style scoped>
     button {
-        color: var(--text-color);
+        color: var(--background-color);
         font-weight: bold;
         font-family: var(--font-family);
         border: none;
