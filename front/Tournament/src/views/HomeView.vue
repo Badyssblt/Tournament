@@ -1,16 +1,33 @@
 <template>
-    <HeaderComponent/>
-    <div class="main-container">
-      <p id="main-title">Rejoignez ou créer des tournois et gagnez des récompenses.</p>
-      <p class="main-description">Découvrez notre plateforme de tournois de jeux vidéo, où vous pouvez créer ou rejoindre des compétitions en ligne. Affrontez d'autres joueurs, montrez vos compétences et vivez l'adrénaline du gaming compétitif avec nous.</p>
+  <div class="absolute w-24 h-24 bg-primary blur-3xl">
+
+  </div>
+  <div class="min-h-screen">
+    <div class="flex flex-col items-center gap-6 w-7/12 m-auto">
+      <p class="text-5xl text-center font-bold">Rejoignez ou créer des tournois et gagnez des récompenses.</p>
+      <p class="text-sm text-center text-black/60">Découvrez notre plateforme de tournois de jeux vidéo, où vous pouvez créer ou rejoindre des compétitions en ligne. Affrontez d'autres joueurs, montrez vos compétences et vivez l'adrénaline du gaming compétitif avec nous.</p>
       <div class="main-button">
-        <button class="primary-button">Découvrir</button>
-        <button class="secondary-button">S'inscrire</button>
+        <router-link class="primary-button" to="/search">Découvrir</router-link>
+        <Button>S'inscrire</Button>
       </div>
     </div>
-    <TournamentRow category="Fortnite"/>
-    <TournamentRow category="Rocket League"/>
-    <TournamentRow category="Valorant"/>
+    <TournamentRow
+        v-if="!emptyCategories.includes('Fortnite')"
+        category="Fortnite"
+        @empty="handleEmpty"
+    />
+    <TournamentRow
+        v-if="!emptyCategories.includes('Rocket League')"
+        category="Rocket League"
+        @empty="handleEmpty"
+    />
+    <TournamentRow
+        v-if="!emptyCategories.includes('Valorant')"
+        category="Valorant"
+        @empty="handleEmpty"
+    />
+  </div>
+
     
     <footer-component/>
 </template>
@@ -18,15 +35,31 @@
 <script>
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import TournamentRow from '@/components/TournamentRow.vue';
+import FooterComponent from '../components/FooterComponent.vue';
+import Button from "@/components/Button.vue";
+import { ref } from "vue"
 export default {
   name: 'Home',
   components: {
     HeaderComponent,
     TournamentRow,
-    FooterComponent
+    FooterComponent,
+    Button
   },
   setup(){
+    const emptyCategories = ref([]);
 
+    const handleEmpty = (category) => {
+      // Ajouter la catégorie aux catégories vides si elle n'a pas de tournois
+      if (!emptyCategories.value.includes(category)) {
+        emptyCategories.value.push(category);
+      }
+    };
+
+    return {
+      emptyCategories,
+      handleEmpty
+    }
   }
 }
 </script>

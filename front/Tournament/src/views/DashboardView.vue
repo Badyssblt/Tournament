@@ -1,5 +1,4 @@
 <template>
-  <header-component/>
   <div class="menu-dashboard">
     <menu-dashboard/>
   </div>

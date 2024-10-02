@@ -1,8 +1,12 @@
-<script setup>;
+<script setup>
+import HeaderComponent from "@/components/HeaderComponent.vue";
 </script>
 
 <template>
-  <RouterView />
+  <HeaderComponent/>
+  <div class="px-[5%]">
+    <RouterView />
+  </div>
 </template>
 
 <style>
@@ -14,12 +18,7 @@
   body {
     background-color: var(--background-color);
   }
-  #app {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    font-family: var(--font-family);
-    
-  }
+
 
   :root {
     --font-family: Montserrat;

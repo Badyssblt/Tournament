@@ -1,5 +1,4 @@
 <template>
-        <header-component/>
         <div class="tournament-container" :v-if="loaded">
             <div class="tournament-top">
                 <div class="tournament-img__container">

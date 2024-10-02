@@ -1,20 +1,47 @@
+
 <template>
-    <header-component/>
-    <form @submit.prevent="handleSubmit">
-        <p class="form-title">Se connecter</p>
-        <div class="input-container">
-            <label for="email">Email</label>
-            <input type="text" name="email" id="email" autocomplete="off" v-model="email" class="input">
+
+  <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Connectez vous à votre compte</h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <div>
+          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email</label>
+          <div class="mt-2">
+            <input v-model="email" id="email" name="email" type="email" autocomplete="email" required="" class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
         </div>
-        
-        <div class="input-container">
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" v-model="password" class="input">
+
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Mot de passe</label>
+            <div class="text-sm">
+              <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Mot de passe oublié ?</a>
+            </div>
+          </div>
+          <div class="mt-2">
+            <input v-model="password" id="password" name="password" type="password" autocomplete="current-password" required="" class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
         </div>
-        <button type="submit">Se connecter</button>
-        <router-link to="/register" class="connexion"> Ou s'inscrire</router-link>
-    </form>
+
+        <div>
+          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Se connecter</button>
+        </div>
+      </form>
+      <div>
+        <NavLink to="/register" class="mt-4 bg-transparent text-black">Ou s'inscrire</NavLink>
+      </div>
+    </div>
+    <div v-if="wrongPass" class="mt-4">
+      <p class="text-center text-red-600 font-bold">Votre mot de passe ou email est incorrect</p>
+    </div>
+  </div>
 </template>
+
 
 <script>
 import HeaderComponent from '../components/HeaderComponent.vue'
@@ -22,13 +49,20 @@ import axios from 'axios';
 import constante from '@/const.js';
 import { ref } from 'vue';
 import router from '@/router';
+import NavLink from "@/components/NavLink.vue";
+import eventBus from "@/eventBus.js";
+
 export default {
-  components: { HeaderComponent },
+  components: {NavLink, HeaderComponent },
   name: 'Login',
   setup(){
     const email = ref('');
     const password = ref('');
+    const message = ref('');
+    const isFailed = ref(false);
     const token = localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.setItem('token', '');
+
+    const wrongPass = ref(false);
     const handleSubmit  = async () => {
         try {
             const res = await axios({
@@ -43,21 +77,28 @@ export default {
                 }
             });
             localStorage.setItem('token', res.data.token);
+            eventBus.emit('tokenChanged', res.data.token);
             router.push('/');
+
         } catch (error) {
-            console.log(error);
             if(error.response.status === 401){
+              wrongPass.value = true;
+            }
+            if(error.response.data.userId){
                 router.push('/verify/' + error.response.data.userId);
             }
         }
 
-   
+
     }
 
     return {
         handleSubmit,
         email,
-        password
+        password,
+        isFailed,
+        message,
+      wrongPass
     }
   },
   title: 'Connexion'
@@ -65,75 +106,3 @@ export default {
 }
 </script>
 
-<style scoped>
-    form {
-        display: flex;
-        flex-direction: column;
-        width: 300px;
-        background: var(--form-color);   
-        padding: 20px;
-        border-radius: 10px;
-        grid-row: 2;
-        grid-column: 6 / 9;
-        gap: 20px;
-    }
-
-    .form-title {
-        color: var(--primary-color);
-        font-size: 1.2em;
-        font-weight: bold;
-        letter-spacing: 2px;
-    }
-
-    .input-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    label {
-        color: var(--text-color);
-    }
-
-    .input {
-        border: none;
-        outline: none;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-family: var(--font-family);
-        background: var(--accent-color);
-        color: var(--primary-color);
-    }
-
-    button{
-        background: var(--primary-color);
-        color: var(--background-color);
-        font-family: var(--font-family);
-        font-weight: bold;
-        border: 2px solid transparent;
-        outline: none;
-        padding: 5px 10px;
-        border-radius: 20px;
-        transition: all .3s ease;
-        cursor: pointer;
-    }
-
-    button:hover {
-        border: 2px solid var(--primary-color);
-        background: none;
-        color: var(--primary-color);
-    }
-
-    .connexion {
-        color: var(--primary-color);
-        opacity: .8;
-        font-size: 12px;
-        transition: all .2s ease;
-        text-align: center;
-    }
-
-    .connexion:hover {
-        text-decoration: underline;
-        font-weight: bold;
-        opacity: 1;
-    }
-</style>

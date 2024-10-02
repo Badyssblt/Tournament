@@ -1,28 +1,30 @@
 <template>
-  <header-component/>
   <form @submit.prevent="createTournament">
-    <h2>Créer un tournoi</h2>
-    <div class="form-container">
-      <div class="form-input">
+    <h2 class="text-xl font-bold">Créer un tournoi</h2>
+    <div class="flex flex-col gap-4">
+      <div class="">
         <label for="name">Nom du tournoi</label>
-        <input type="text" name="name" id="name" autocomplete="off" v-model="name">
+        <input type="text" name="name" id="name" autocomplete="off" v-model="name" class="px-4 py-2 border rounded w-full">
       </div>
       <div class="form-input">
         <label for="image">Image</label>
-        <input type="text" name="image" id="image" v-model="image">
+        <input type="text" name="image" id="image" v-model="image" class="px-4 py-2 border rounded w-full">
       </div>
       <div class="form-input">
         <label for="description">Description</label>
-        <textarea name="description" id="description" cols="30" rows="10" v-model="description"></textarea>
+        <textarea name="description" id="description" cols="30" rows="10" v-model="description" class="px-4 py-2 border rounded w-full"></textarea>
       </div>
-      <select name="game" id="game" v-model="game">
-        <option v-for="item in games" :value="item['@id']">{{ item.name }}</option>
-      </select>
+      <label for="game">Catégorie du tournoi
+        <select name="game" id="game" v-model="game" class="px-4 py-2 border rounded w-full">
+          <option v-for="item in games" :value="item['@id']" >{{ item.name }}</option>
+        </select>
+      </label>
+
       <div class="form-input">
         <label for="maxTeams">Nombre d'équipes maximum</label>
-        <input type="number" name="maxTeams" id="maxTeams" v-model="maxTeams">
+        <input type="number" name="maxTeams" id="maxTeams" v-model="maxTeams" class="px-4 py-2 border rounded w-full">
       </div>
-      <button>Créer un tournoi</button>
+      <Button class="mt-4 w-full">Créer un tournoi</Button>
       <p v-if="isSuccess">{{ message }}</p>
     </div>
   </form>
@@ -35,9 +37,10 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import { onMounted, ref } from 'vue';
 import router from '@/router';
 import { jwtDecode } from 'jwt-decode';
+import Button from "@/components/Button.vue";
 export default {
   name: 'CreateTournamentView',
-  components: { HeaderComponent },
+  components: {Button, HeaderComponent },
   setup(){
     const games = ref([]);
     const token = localStorage.getItem('token');
@@ -75,8 +78,6 @@ export default {
           visibility: false,
           maxTeams: maxTeams.value,
           CreatorTournament: '/api/users/' + decoded.id,
-          description: description.value
-          maxTeams: maxTeams.value
         }, {
           headers: {
             'Authorization': 'Bearer ' + token,
@@ -115,94 +116,3 @@ export default {
 }
 </script>
 
-<style scoped>
-  form {
-    grid-column: 2 / 12;
-    background: var(--form-color);
-    padding: 15px;
-    border-radius: 20px;
-    width: 500px;
-    margin: 0 auto;
-  }
-
-  h2 {
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin-bottom: 10px;
-  }
-
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .form-input {
-    display: flex;
-    flex-direction: column;
-  }
-
-  input {
-        width: 100%;
-        border: none;
-        outline: none;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-family: var(--font-family);
-        background: var(--accent-color);
-        color: var(--primary-color);
-    }
-  
-  textarea {
-    width: 100%;
-    background: var(--accent-color);
-    border: none;
-    resize: none;
-    padding: 10px;
-    font-family: var(--font-family);
-    border-radius: 20px;
-    padding-left: 20px;
-  }
-
-  textarea:focus {
-    border: none;
-    outline: none;
-  }
-
-  select {
-        border: 2px solid transparent;
-        font-family: var(--font-family);
-        background: var(--accent-color);
-        cursor: pointer;
-    }
-
-    select:focus {
-        border: 2px solid var(--primary-color);
-        outline: none;
-    }
-
-    option {
-        background: var(--accent-color);
-        color: var(--primary-color);
-        font-family: var(--font-family);
-    }
-
-    button {
-        background: var(--primary-color);
-        border: 2px solid transparent;
-        border-radius: 20px;
-        font-family: var(--font-family);
-        color: var(--background-color);
-        padding: 5px 10px;
-        font-weight: bold;
-        transition: all .3s ease;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    button:hover {
-        border: 2px solid var(--primary-color);
-        background: none;
-        color: var(--primary-color);
-    }
-</style>

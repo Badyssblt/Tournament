@@ -1,7 +1,7 @@
 <template>
   <div class="myTournament-container">
                 <div class="myTournament-wrapper">
-                    <router-link class="primary-button" to="/tournament/create">Créer un tournoi</router-link>
+                    <NavLink class="primary-button" to="/tournament/create">Créer un tournoi</NavLink>
                     <div class="myTournament-item" v-for="item in tournaments">
                         <img :src="item.image " alt="">
                         <div class="myTournament-item__content">
@@ -17,8 +17,11 @@
 </template>
 
 <script>
+import NavLink from "@/components/NavLink.vue";
+
 export default {
     name: 'MyTournamentComponent',
+  components: {NavLink},
     props: {
         data: {
             type: Object,

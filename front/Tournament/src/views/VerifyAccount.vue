@@ -1,12 +1,11 @@
 <template>
-  <header-component/>
   <form @submit.prevent="handleSubmit">
-    <h2>Vérifier votre email</h2>
-    <div class="form-input">
-        <label for="code">Code de vérification</label>
-        <input type="number" name="code" id="code" autocomplete="off" v-model="code">
+    <h2 class="text-xl font-bold text-center">Vérifier votre email</h2>
+    <div class="flex flex-col items-center mt-6 gap-2">
+        <label for="code" class="font-medium text-lg">Code de vérification</label>
+        <input type="number" name="code" id="code" autocomplete="off" v-model="code" class="text-center">
     </div>
-    <button type="submit">Vérifier</button>
+    <Button type="submit" class="w-full mt-4">Vérifier</Button>
     <p v-if="isSuccess">{{ message }}</p>
   </form>
 </template>
@@ -18,8 +17,9 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router';
 import router from '@/router';
+import Button from "@/components/Button.vue";
 export default {
-  components: { HeaderComponent },
+  components: {Button, HeaderComponent },
   name: "VerifyAccount",
   setup(context) {
     const route = useRoute();
@@ -60,59 +60,4 @@ export default {
 }
 </script>
 
-<style scoped>
-  h2 {
-    font-weight: bold;
-  }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 50%  ;
-    background: var(--form-color);
-    padding: 20px;
-    border-radius: 20px;
-    grid-column: 5 / 12;
-    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  }
-
-
-  .form-input {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  input {
-    text-align: center;
-    width: 60%;
-    font-size: 30px;
-    font-family: var(--font-family);
-    outline: none;
-  }
-
-  button{
-        background: var(--primary-color);
-        color: var(--background-color);
-        font-family: var(--font-family);
-        font-weight: bold;
-        border: 2px solid transparent;
-        outline: none;
-        padding: 5px 10px;
-        border-radius: 20px;
-        transition: all .3s ease;
-        cursor: pointer;
-        width: 50%;
-    }
-    label {
-        margin-right: 60px;
-    }
-
-    button:hover {
-        border: 2px solid var(--primary-color);
-        background: none;
-        color: var(--primary-color);
-    }
-</style>

@@ -25,25 +25,27 @@ export default {
             required: true
         }
     },
-    setup(props){
+    setup(props, { emit }){
+
         const data = ref([]);
         const category = ref(props.category);
         const getData = async () => {
             try {
                 const res = await axios.get(_const.axios + '/tournaments?category=' + category.value,
-                const res = await axios.get('http://localhost:8080/api/tournaments?category=' + category.value,
                     {
                         headers: {
                             "Content-Type": "application/ld+json"
                         }
                     });
                 data.value = res.data['hydra:member'];
+              if (data.value.length === 0) {
+                emit('empty', category.value);
+              }
             }catch(error){
                 console.error('Erreur');
                 throw error;
             }
-           
-
+        
         }
         onMounted(async () => {
             await getData();

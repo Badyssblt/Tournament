@@ -1,19 +1,22 @@
 <template>
-  <div class="card-container">
-    <div class="card-image">
-        <img :src="data.image" alt="">
+  <div class="w-96 flex flex-col gap-4 border p-4 rounded">
+    <div>
+        <img :src="data.image" alt="" class="rounded">
     </div>
-    <div class="card-info">
+    <div class="flex flex-col gap-2">
         <p class="card-title">{{ data.name }}</p>
         <p class="card-secondary">Equipe maximum : <b>{{ data.maxTeams }}</b></p>
-        <router-link class="primary-button" :to="'/tournament/' + data.id">Voir plus</router-link>
+        <NavLink :to="'/tournament/' + data.id">Voir plus</NavLink>
     </div>
   </div>
 </template>
 
 <script>
+import NavLink from "@/components/NavLink.vue";
+
 export default {
     name: "TournamentCard",
+    components: {NavLink},
     props: {
         datas: {
             type: Object,
@@ -30,24 +33,7 @@ export default {
 </script>
 
 <style scoped>
-    .card-container {
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
-        padding: 30px 20px;
-        border-radius: 10px;
-        background: var(--form-color);   
-        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px; 
-    }
-    .card-info {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        color: var(--text-color);
-        width: 100%;
-    }
+
 
     .card-title {
         font-weight: bold;
@@ -56,11 +42,6 @@ export default {
 
     .card-secondary {
         font-size: .9em;
-    }
-
-
-    img {
-        border-radius: 10px;
     }
 
     .primary-button {

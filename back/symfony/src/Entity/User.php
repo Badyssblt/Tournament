@@ -71,7 +71,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(['read:Tournament', 'read:team:item'])]
-    #[Groups(['read:Tournament', 'read:team:item'])]
     private ?string $email = null;
 
     #[ORM\Column]

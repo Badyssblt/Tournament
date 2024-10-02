@@ -1,29 +1,55 @@
 <template>
-    <header-component/>
-    <form @submit.prevent="handleSubmit">
-        <h2 class="title">S'inscrire</h2>
-        <div class="form-input">
-            <label for="name">Nom</label>
-            <input type="text" name="name" id="name" autocomplete="off" class="full" v-model="name">
+  <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+      <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+      <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Créer un compte</h2>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+
+        <div>
+          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Nom</label>
+          <div class="mt-2">
+            <input v-model="name" id="name" name="name" type="text" autocomplete="name" required class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
         </div>
-        <div class="form-input">
-            <label for="email">Adresse email</label>
-            <input type="email" name="email" id="email" autocomplete="off" placeholder="JohnDoe@exemple.com" class="full" v-model="email">
+
+        <div>
+          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Adresse email</label>
+          <div class="mt-2">
+            <input v-model="email" id="email" name="email" type="email" autocomplete="email" required placeholder="JohnDoe@exemple.com" class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
         </div>
-        <div class="form-row">
-            <div class="form-input">
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password" autocomplete="off" v-model="password">
-            </div>
-            <div class="form-input">
-                <label for="password2">Confirmer votre mot de passe</label>
-                <input type="password" name="password2" id="password2" autocomplete="off" v-model="confirmPassword">
-            </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Mot de passe</label>
+          <div class="mt-2">
+            <input v-model="password" id="password" name="password" type="password" autocomplete="new-password" required class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
         </div>
-        <button type="submit">S'inscrire</button>
-        <router-link to="/login" class="connexion">Ou se connecter</router-link>
-        <p class="warning-text" v-if="isSuccess">{{ message }}</p>
-    </form>
+
+        <div>
+          <label for="password2" class="block text-sm font-medium leading-6 text-gray-900">Confirmer votre mot de passe</label>
+          <div class="mt-2">
+            <input v-model="confirmPassword" id="password2" name="password2" type="password" autocomplete="new-password" required class="pl-2 focus:outline-none block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">S'inscrire</button>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center">
+        <NavLink to="/login" class="mt-4 bg-transparent text-black">Ou se connecter</NavLink>
+      </div>
+
+      <div v-if="isSuccess" class="mt-4">
+        <p class="text-center text-indigo-600 font-bold">{{ message }}</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -32,9 +58,10 @@ import { ref } from "vue";
 import axios from "axios";
 import _const from "@/const.js";
 import router from '@/router';
+import NavLink from "@/components/NavLink.vue";
 
 export default {
-  components: { HeaderComponent },
+  components: {NavLink, HeaderComponent },
     setup(){
         const email = ref('');
         const password = ref('');
@@ -51,7 +78,8 @@ export default {
                 const res = await axios.post(_const.axios + '/users', {
                     email: email.value,
                     password: password.value,
-                    name: name.value
+                    name: name.value,
+                    is_verified: false
                 }, {
                     headers: {
                         'Content-Type': _const.content
@@ -88,88 +116,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-    .title {
-        font-weight: bold;
-        color: var(--secondary-color);
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-    form {
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        width: 600px;
-        background: var(--form-color);
-        padding: 20px;
-        border-radius: 20px;
-        grid-row: 2;
-        grid-column: 2 / 12;
-    }
-
-    .full {
-        width: 100%;
-    }
-
-    .form-row {
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-    }
-
-    .form-input {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-
-    input {
-        width: 100%;
-        padding-left: 5px;
-        background: var(--accent-color);
-        border: 2px solid transparent;
-        outline: none;
-        border-radius: 20px;
-        font-family: var(--font-family);
-        margin-top: 5px;
-    }
-
-    .connexion {
-        color: var(--primary-color);
-        opacity: .8;
-        font-size: 12px;
-        transition: all .2s ease;
-        text-align: center;
-    }
-
-    .connexion:hover {
-        text-decoration: underline;
-        font-weight: bold;
-        opacity: 1;
-    }
-
-    button{
-        background: var(--primary-color);
-        color: var(--background-color);
-        font-family: var(--font-family);
-        font-weight: bold;
-        border: 2px solid transparent;
-        outline: none;
-        padding: 5px 10px;
-        border-radius: 20px;
-        transition: all .3s ease;
-        cursor: pointer;
-    }
-
-    button:hover {
-        border: 2px solid var(--primary-color);
-        background: none;
-        color: var(--primary-color);
-    }
-    .warning-text {
-        text-align: center;
-    }
-</style>
